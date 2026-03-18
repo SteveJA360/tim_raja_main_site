@@ -6,7 +6,7 @@
   "scripts": {
     "generate:pages": "py -3 scripts/generate_page_data.py",
     "dev": "vite",
-    "build": "npm run generate:pages && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "start": "node server.mjs"
