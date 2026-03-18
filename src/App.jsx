@@ -8,33 +8,64 @@ import {
   useLocation,
 } from "react-router-dom";
 import {
+  aboutContent,
   business,
-  campaignPages,
-  faqs,
-  highlightCards,
-  locations,
+  contactContent,
+  emdrContent,
+  footerContent,
+  homeContent,
+  hypnotherapyContent,
+  images,
   navLinks,
-  pricingCards,
-  promisePoints,
-  quotes,
-  serviceGroups,
-  testimonials,
+  pricingContent,
+  serviceCategories,
+  testimonialsContent,
 } from "./data/siteData";
-
 
 const ctaNoise = new Set([
   "GET IN TOUCH",
   "BOOK NOW",
   "LET'S TALK",
+  "Let's Talk",
   "BEGIN YOUR JOURNEY",
   "Schedule A Zoom Call",
   "Learn more",
   "Click",
   "here",
 ]);
+
+const repeatedLines = new Set([
+  "TIM RAJA",
+  business.credentials,
+  business.subtitle,
+  business.summary,
+  "Clinical Hypnotherapist, Performance Coach and Master NLP Practitioner",
+]);
+
+const displayReplacements = [
+  ["â€™", "'"],
+  ["â€œ", '"'],
+  ["â€", '"'],
+  ["â€˜", "'"],
+  ["â€“", "-"],
+  ["â€”", "-"],
+  ["â€¦", "..."],
+  ["Â", ""],
+  ["Ł", "£"],
+];
+
 let generatedPagesCache;
 let generatedPagesPromise;
 
+function cleanDisplayText(value = "") {
+  let text = `${value}`;
+
+  for (const [before, after] of displayReplacements) {
+    text = text.replaceAll(before, after);
+  }
+
+  return text.replace(/\s+/g, " ").trim();
+}
 
 function normalizePath(pathname) {
   return pathname.replace(/^\/+|\/+$/g, "");
@@ -46,10 +77,17 @@ function formatTitle(title) {
   }
 
   if (title.includes("Tim Raja Hypnotherapy")) {
-    return title;
+    return cleanDisplayText(title);
   }
 
-  return `${title} | ${business.siteName}`;
+  return `${cleanDisplayText(title)} | ${business.siteName}`;
+}
+
+function joinText(previous, next) {
+  return `${previous} ${next}`
+    .replace(/\s+([,.;:!?])/g, "$1")
+    .replace(/"\s+\./g, '".')
+    .trim();
 }
 
 function loadGeneratedPages() {
@@ -74,6 +112,7 @@ function useGeneratedPage(slug) {
   useEffect(() => {
     let active = true;
     const cached = generatedPagesCache?.find((item) => item.slug === slug);
+
     if (cached) {
       setPage(cached);
       setLoading(false);
@@ -111,7 +150,7 @@ function ScrollToTop() {
   const location = useLocation();
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo(0, 0);
   }, [location.pathname]);
 
   return null;
@@ -131,54 +170,12 @@ function AppShell() {
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/hypnotherapy" element={<HypnotherapyPage />} />
+          <Route path="/emdr" element={<EMDRPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/testimonials" element={<TestimonialsPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route
-            path="/about"
-            element={
-              <CorePage
-                slug="about"
-                badge="About Tim Raja"
-                title="Practical therapy shaped by real life, work pressure and family experience."
-                intro="Tim Raja moved from senior leadership into therapy because he wanted to spend his time helping people create real change rather than chasing company sales targets."
-                sideNote="Clinical hypnotherapist, EMDR practitioner, Master NLP Practitioner and father of four."
-                image={business.aboutImage}
-                quote={quotes.about}
-                quoteAuthor={quotes.aboutAuthor}
-              />
-            }
-          />
-          <Route
-            path="/hypnotherapy"
-            element={
-              <CorePage
-                slug="hypnotherapy"
-                badge="Clinical Hypnotherapy"
-                title="A clear, evidence-led route for breaking patterns, calming symptoms and changing behaviour."
-                intro="The original site positioned hypnotherapy as a professional, non-intrusive way to unlock change when willpower alone has stopped working. This rebuild keeps that tone and presents it more cleanly."
-                sideNote="Suitable for anxiety, unhealthy habits, stress, weight loss, phobias, sleep issues, pain and more."
-                image={business.heroImage}
-                quote={quotes.home}
-                quoteAuthor={quotes.homeAuthor}
-              />
-            }
-          />
-          <Route
-            path="/emdr"
-            element={
-              <CorePage
-                slug="emdr"
-                badge="EMDR Therapy"
-                title="A focused trauma therapy page built for trust, clarity and enquiries."
-                intro="EMDR is presented here as a structured, evidence-based therapy for trauma and distressing life events, with the eight-stage process explained in plain English."
-                sideNote="Useful for trauma, PTSD and other distressing memories, with sessions guided carefully and at the client’s pace."
-                image={business.emdrImage}
-                quote="Needing help doesn’t have a look, but asking for it is always beautiful."
-                quoteAuthor="Brittany Burgunder"
-              />
-            }
-          />
           <Route path="*" element={<PageResolver />} />
         </Routes>
       </main>
@@ -190,13 +187,10 @@ function AppShell() {
 function Header({ menuOpen, setMenuOpen }) {
   return (
     <header className="site-header">
-      <div className="site-header__inner container">
-        <Link className="brand" to="/">
-          <img className="brand__mark" src={business.logo} alt={business.siteName} />
-          <div>
-            <p className="brand__eyebrow">{business.person}</p>
-            <p className="brand__title">Clinical Hypnotherapy</p>
-          </div>
+      <div className="site-header__bar" />
+      <div className="container site-header__inner">
+        <Link className="brand" to="/" aria-label={business.siteName}>
+          <img className="brand__logo" src={images.logo} alt={business.siteName} />
         </Link>
 
         <button
@@ -222,7 +216,7 @@ function Header({ menuOpen, setMenuOpen }) {
             </NavLink>
           ))}
           <a className="button button--solid site-nav__cta" href={business.phoneHref}>
-            Call {business.phoneDisplay}
+            {homeContent.introButton}
           </a>
         </nav>
       </div>
@@ -231,58 +225,41 @@ function Header({ menuOpen, setMenuOpen }) {
 }
 
 function HomePage() {
-  usePageTitle("Tim Raja Hypnotherapy");
+  usePageTitle(business.fullTitle);
 
   return (
     <>
-      <section className="hero">
-        <div className="hero__glow hero__glow--one" />
-        <div className="hero__glow hero__glow--two" />
-        <div className="container hero__grid">
-          <div className="hero__copy">
-            <p className="eyebrow">Clinical hypnotherapy and EMDR</p>
-            <h1>
-              Professional support for anxiety, stress, PTSD, phobias, habits and
-              performance.
-            </h1>
-            <p className="hero__lede">
-              A stronger, conversion-focused version of Tim Raja’s existing site,
-              rebuilt from the archived content and structured around trust, clarity
-              and enquiry generation.
-            </p>
-
-            <div className="hero__actions">
-              <Link className="button button--solid" to="/contact">
-                Book the free introduction
-              </Link>
-              <a className="button button--ghost" href={business.phoneHref}>
-                Call {business.phoneDisplay}
-              </a>
-            </div>
-
-            <ul className="hero__points">
-              {promisePoints.map((point) => (
-                <li key={point}>{point}</li>
-              ))}
-            </ul>
+      <section className="home-hero">
+        <div className="container home-hero__grid">
+          <div className="home-hero__media">
+            <img className="home-hero__image" src={images.hero} alt={business.person} />
           </div>
 
-          <div className="hero__panel">
-            <div className="hero-card">
-              <img className="hero-card__logo" src={business.cardLogo} alt={business.person} />
-              <p className="hero-card__label">{business.freeIntro}</p>
-              <h2>
-                Calm, direct therapy with in-person and online options.
-              </h2>
-              <p>
-                Sessions are available in Cheltenham, Oxford, near Cirencester or
-                remotely by Zoom.
-              </p>
-              <Link className="button button--solid button--block" to="/contact">
-                Start with a quick call
+          <div className="panel home-hero__content">
+            <p className="kicker">{business.person}</p>
+            <p className="meta-line">{business.credentials}</p>
+            <h1>{business.subtitle}</h1>
+            <p>{business.summary}</p>
+            <h2 className="home-hero__subheading">{homeContent.heroTitle}</h2>
+            <p>{homeContent.heroText}</p>
+
+            <ActionRow>
+              <Link className="button button--solid" to="/contact">
+                {homeContent.introButton}
+              </Link>
+              <a className="button button--ghost" href={business.phoneHref}>
+                {business.phoneDisplay}
+              </a>
+            </ActionRow>
+
+            <div className="panel intro-panel">
+              <p className="kicker">{business.freeIntro}</p>
+              <p>{business.introOffer}</p>
+              <p>{business.introOfferDetail}</p>
+              <Link className="button button--soft" to="/contact">
+                {homeContent.contactButton}
               </Link>
             </div>
-            <img className="hero__image" src={business.heroImage} alt={business.person} />
           </div>
         </div>
       </section>
@@ -295,193 +272,321 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="section">
-        <div className="container section__intro">
-          <p className="eyebrow">Why this works</p>
-          <h2>The tone stays familiar, but the presentation is sharper and more premium.</h2>
+      <section className="image-band">
+        <div className="image-band__backdrop" />
+        <div className="container image-band__inner">
+          <div className="panel image-band__panel">
+            <p className="kicker">{homeContent.breakthroughEyebrow}</p>
+            <h2>{homeContent.breakthroughTitle}</h2>
+            {homeContent.breakthroughParagraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+            <ActionRow>
+              <Link className="button button--solid" to="/contact">
+                {homeContent.bookButton}
+              </Link>
+            </ActionRow>
+          </div>
         </div>
-        <div className="container card-grid">
-          {highlightCards.map((card) => (
-            <article key={card.title} className="info-card">
-              <h3>{card.title}</h3>
+      </section>
+
+      <section className="section">
+        <div className="container feature-grid">
+          {homeContent.benefitPoints.map((point) => (
+            <article key={point} className="panel feature-card">
+              <p>{point}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <ServiceMatrix />
+
+      <section className="section">
+        <div className="container faq-layout">
+          <article className="panel faq-layout__intro">
+            <SectionHeading
+              eyebrow={homeContent.questions.eyebrow}
+              title={homeContent.questions.title}
+            />
+            {homeContent.questions.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </article>
+
+          <div className="faq-layout__list">
+            {homeContent.faqs.map((item) => (
+              <article key={item.question} className="panel faq-card">
+                <h3>{item.question}</h3>
+                <p>{item.answer}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section section--tint">
+        <div className="container split-section">
+          <div className="split-section__content">
+            <SectionHeading eyebrow={homeContent.about.eyebrow} title={business.person} />
+            {homeContent.about.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+            <div className="proof-strip__inner proof-strip__inner--compact">
+              {business.proofLogos.map((logo) => (
+                <img key={logo.src} src={logo.src} alt={logo.alt} />
+              ))}
+            </div>
+          </div>
+
+          <div className="split-section__media">
+            <img className="split-section__image" src={images.about} alt={business.person} />
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container split-section split-section--reverse">
+          <div className="split-section__media">
+            <img className="split-section__image" src={images.research} alt="Hypnotherapy research" />
+          </div>
+
+          <article className="panel split-section__content">
+            <p className="kicker">{homeContent.research.eyebrow}</p>
+            {homeContent.research.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+            <p className="research-quote">&ldquo;{homeContent.research.quote}&rdquo;</p>
+            <p className="research-credit">{homeContent.research.author}</p>
+          </article>
+        </div>
+      </section>
+
+      <QuoteBand quote={homeContent.research.quote} author={homeContent.research.author} />
+    </>
+  );
+}
+
+function AboutPage() {
+  usePageTitle("About Me");
+
+  return (
+    <>
+      <PageHero
+        eyebrow={business.person}
+        title={aboutContent.title}
+        body={[aboutContent.intro]}
+        image={images.about}
+      />
+
+      <section className="section">
+        <div className="container split-section">
+          <div className="split-section__content">
+            {aboutContent.story.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </div>
+          <div className="split-section__media">
+            <img className="split-section__image" src={images.about} alt={business.person} />
+          </div>
+        </div>
+      </section>
+
+      <section className="section section--tint">
+        <div className="container">
+          <SectionHeading eyebrow="My Values & Beliefs" title="My Values & Beliefs" />
+          <div className="feature-grid">
+            {aboutContent.values.map((value) => (
+              <article key={value.title} className="panel feature-card">
+                <h3>{value.title}</h3>
+                <p>{value.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <SectionHeading eyebrow="Testimonials" title={testimonialsContent.title} />
+          <div className="testimonial-grid">
+            {aboutContent.testimonials.map((item) => (
+              <article key={item.author} className="panel testimonial-card">
+                <p className="testimonial-card__quote">&ldquo;{item.quote}&rdquo;</p>
+                <p className="testimonial-card__author">{item.author}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <QuoteBand quote={aboutContent.quote} author={aboutContent.author} />
+    </>
+  );
+}
+
+function HypnotherapyPage() {
+  usePageTitle("Hypnotherapy");
+
+  return (
+    <>
+      <PageHero
+        eyebrow={hypnotherapyContent.eyebrow}
+        title={hypnotherapyContent.title}
+        body={hypnotherapyContent.intro}
+        image={images.hero}
+      />
+
+      <section className="section">
+        <div className="container">
+          <article className="panel statement-card">
+            <p className="kicker">{hypnotherapyContent.overview.eyebrow}</p>
+            <h2>{hypnotherapyContent.overview.title}</h2>
+            <p>{hypnotherapyContent.overview.text}</p>
+          </article>
+        </div>
+      </section>
+
+      <section className="section section--tint">
+        <div className="container feature-grid">
+          {hypnotherapyContent.features.map((feature) => (
+            <article key={feature.title} className="panel feature-card">
+              <h3>{feature.title}</h3>
+              <p>{feature.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container faq-layout faq-layout--single">
+          {hypnotherapyContent.faqs.map((item) => (
+            <article key={item.question} className="panel faq-card">
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <SectionHeading
+            eyebrow="Hypnotherapy"
+            title={hypnotherapyContent.examplesTitle}
+            intro={hypnotherapyContent.examplesIntro}
+          />
+          <div className="feature-grid feature-grid--compact">
+            {hypnotherapyContent.examples.map((item) => (
+              <article key={item.name} className="panel feature-card">
+                <h3>{item.name}</h3>
+                <p>{item.text}</p>
+              </article>
+            ))}
+          </div>
+          <div className="panel note-card">
+            <p>{hypnotherapyContent.examplesOutro}</p>
+          </div>
+        </div>
+      </section>
+
+      <ServiceMatrix />
+    </>
+  );
+}
+
+function EMDRPage() {
+  usePageTitle("EMDR");
+
+  return (
+    <>
+      <PageHero eyebrow="EMDR" title={emdrContent.title} body={emdrContent.intro} image={images.emdr} />
+
+      <section className="section">
+        <div className="container split-section">
+          <article className="panel split-section__content">
+            <SectionHeading eyebrow="EMDR" title={emdrContent.difference.title} />
+            {emdrContent.difference.paragraphs.map((paragraph) => (
+              <p key={paragraph}>{paragraph}</p>
+            ))}
+          </article>
+          <div className="split-section__media">
+            <img className="split-section__image" src={images.emdr} alt={emdrContent.title} />
+          </div>
+        </div>
+      </section>
+
+      <section className="section section--tint">
+        <div className="container">
+          <SectionHeading eyebrow="EMDR" title={emdrContent.stepsTitle} />
+          <div className="timeline">
+            {emdrContent.steps.map((step, index) => (
+              <article key={step.title} className="panel timeline__item">
+                <p className="timeline__number">{String(index + 1).padStart(2, "0")}</p>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <div className="feature-grid feature-grid--compact">
+            {emdrContent.evidence.map((paragraph) => (
+              <article key={paragraph} className="panel feature-card">
+                <p>{paragraph}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="container">
+          <SectionHeading eyebrow="My Values & Beliefs" title="My Values & Beliefs" />
+          <div className="feature-grid">
+            {emdrContent.values.map((value) => (
+              <article key={value.title} className="panel feature-card">
+                <h3>{value.title}</h3>
+                <p>{value.text}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <QuoteBand quote={emdrContent.quote} author={emdrContent.author} />
+    </>
+  );
+}
+
+function PricingPage() {
+  usePageTitle("Pricing");
+
+  return (
+    <>
+      <PageHero eyebrow={business.person} title={pricingContent.title} body={pricingContent.intro} image={images.pricing} />
+
+      <section className="section">
+        <div className="container pricing-grid">
+          {pricingContent.cards.map((card) => (
+            <article key={card.eyebrow + card.title} className="panel pricing-card">
+              <p className="kicker">{card.eyebrow}</p>
+              <h2>{card.title}</h2>
+              {card.prices.map((price) => (
+                <p key={price} className="pricing-card__price-line">
+                  {price}
+                </p>
+              ))}
               <p>{card.text}</p>
             </article>
           ))}
         </div>
       </section>
 
-      <section className="section section--tinted">
-        <div className="container section__intro">
-          <p className="eyebrow">Treatment Areas</p>
-          <h2>Core services are surfaced quickly, with the deeper archive still preserved.</h2>
-        </div>
-        <div className="container service-groups">
-          {serviceGroups.map((group) => (
-            <article key={group.label} className="service-group">
-              <p className="service-group__label">{group.label}</p>
-              <div className="chip-grid">
-                {group.items.map((item) => (
-                  <Link key={item.href} className="chip-link" to={item.href}>
-                    {item.title}
-                  </Link>
-                ))}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container split-panel">
-          <div className="split-panel__content">
-            <p className="eyebrow">About Tim Raja</p>
-            <h2>Built around credibility, not wellness fluff.</h2>
-            <p>
-              Tim’s archived copy is clear about who he is: a certified clinical
-              hypnotherapist, EMDR practitioner, Master NLP Practitioner and
-              performance coach who spent 25 years at senior manager level before
-              changing direction.
-            </p>
-            <p>
-              That background matters. It gives the site a grounded voice that works
-              well for people dealing with pressure, performance issues, anxiety or a
-              long-running habit they want to break.
-            </p>
-            <Link className="button button--ghost" to="/about">
-              Read Tim’s story
-            </Link>
-          </div>
-          <img className="split-panel__image" src={business.aboutImage} alt={business.person} />
-        </div>
-      </section>
-
-      <section className="section section--contrast">
-        <div className="container section__intro section__intro--light">
-          <p className="eyebrow">Pricing & Programmes</p>
-          <h2>Clear pricing blocks make the buying path easier to understand.</h2>
-        </div>
-        <div className="container price-grid">
-          {pricingCards.map((card) => (
-            <article key={card.title} className="price-card">
-              <p className="price-card__title">{card.title}</p>
-              <p className="price-card__price">{card.price}</p>
-              <p className="price-card__detail">{card.detail}</p>
-              <p>{card.copy}</p>
-            </article>
-          ))}
-        </div>
-        <div className="container section__actions">
-          <Link className="button button--solid" to="/pricing">
-            See the pricing page
-          </Link>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container section__intro">
-          <p className="eyebrow">Testimonials</p>
-          <h2>The strongest proof from the original site has been kept and cleaned up.</h2>
-        </div>
-        <div className="container testimonial-grid">
-          {testimonials.slice(0, 4).map((item) => (
-            <article key={item.author} className="testimonial-card">
-              <p className="testimonial-card__quote">“{item.quote}”</p>
-              <p className="testimonial-card__author">{item.author}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section section--tinted">
-        <div className="container section__intro">
-          <p className="eyebrow">Campaign Routes</p>
-          <h2>Google Ads landing pages and local service routes are still available.</h2>
-        </div>
-        <div className="container campaign-grid">
-          {campaignPages.map((page) => (
-            <Link key={page.href} className="campaign-card" to={page.href}>
-              <h3>{page.label}</h3>
-              <p>{page.note}</p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container quote-panel">
-          <p className="quote-panel__text">“{quotes.home}”</p>
-          <p className="quote-panel__author">{quotes.homeAuthor}</p>
-        </div>
-      </section>
-
-      <ContactBand />
-    </>
-  );
-}
-
-function CorePage({ slug, badge, title, intro, sideNote, image, quote, quoteAuthor }) {
-  const { page, loading } = useGeneratedPage(slug);
-  usePageTitle(page?.title || title);
-
-  if (loading && !page) {
-    return <LoadingPage />;
-  }
-
-  return (
-    <>
-      <PageHero
-        badge={badge}
-        title={title}
-        intro={intro}
-        image={image || page?.image || business.heroImage}
-      />
-      <section className="section">
-        <div className="container article-shell">
-          <article className="article-card">
-            <p className="article-callout">{sideNote}</p>
-            <ContentStream lines={page?.lines || []} />
-          </article>
-          <aside className="article-sidebar">
-            <SidebarCard />
-          </aside>
-        </div>
-      </section>
-      <section className="section">
-        <div className="container quote-panel">
-          <p className="quote-panel__text">“{quote}”</p>
-          <p className="quote-panel__author">{quoteAuthor}</p>
-        </div>
-      </section>
-      <ContactBand />
-    </>
-  );
-}
-
-function PricingPage() {
-  usePageTitle("Pricing & Programmes");
-
-  return (
-    <>
-      <PageHero
-        badge="Pricing"
-        title="Simple pricing, stronger explanations and less friction before enquiry."
-        intro="The legacy pricing content is still preserved, but the main offer is now surfaced as clean programme cards with short descriptions that help people decide faster."
-        image="/archive-assets/wp-content/uploads/2021/06/life-coach-34.jpg"
-      />
-      <section className="section">
-        <div className="container price-grid">
-          {pricingCards.map((card) => (
-            <article key={card.title} className="price-card price-card--light">
-              <p className="price-card__title">{card.title}</p>
-              <p className="price-card__price">{card.price}</p>
-              <p className="price-card__detail">{card.detail}</p>
-              <p>{card.copy}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-      <LegacyArticle slug="pricing" badge="Archived Pricing Copy" />
-      <ContactBand />
+      <ServiceMatrix />
     </>
   );
 }
@@ -492,22 +597,24 @@ function TestimonialsPage() {
   return (
     <>
       <PageHero
-        badge="Testimonials"
-        title="Social proof is kept front and centre, because this is a trust-led service."
-        intro="The original site’s testimonials have been preserved and presented as clearer, easier-to-scan review cards."
-        image="/archive-assets/wp-content/uploads/2021/07/pexels-nathan-cowley-897817-1.jpg"
+        eyebrow={testimonialsContent.eyebrow}
+        title={testimonialsContent.title}
+        body={[testimonialsContent.subtitle, testimonialsContent.intro]}
+        image={images.contact}
       />
+
       <section className="section">
         <div className="container testimonial-grid testimonial-grid--full">
-          {testimonials.map((item) => (
-            <article key={`${item.author}-${item.quote.slice(0, 20)}`} className="testimonial-card">
-              <p className="testimonial-card__quote">“{item.quote}”</p>
+          {testimonialsContent.items.map((item) => (
+            <article key={item.author + item.quote.slice(0, 20)} className="panel testimonial-card">
+              <p className="testimonial-card__quote">&ldquo;{item.quote}&rdquo;</p>
               <p className="testimonial-card__author">{item.author}</p>
             </article>
           ))}
         </div>
       </section>
-      <ContactBand />
+
+      <QuoteBand quote={testimonialsContent.quote} author={testimonialsContent.author} />
     </>
   );
 }
@@ -517,60 +624,66 @@ function ContactPage() {
 
   return (
     <>
-      <PageHero
-        badge="Contact"
-        title="A more useful contact page with the existing HubSpot form preserved."
-        intro="The original contact route used a HubSpot form. That form is still embedded here, alongside FAQs and clear practice location details."
-        image="/archive-assets/wp-content/uploads/2021/06/life-coach-25.jpg"
-      />
+      <PageHero eyebrow={contactContent.title} title={contactContent.title} body={[contactContent.intro]} image={images.contact} />
 
       <section className="section">
-        <div className="container contact-grid">
-          <div className="contact-form-card">
-            <p className="eyebrow">Send an enquiry</p>
-            <h2>{business.freeIntro}</h2>
-            <p>
-              Use the existing live form or contact Tim directly by phone or email.
-            </p>
+        <div className="container contact-layout">
+          <article className="panel contact-form-card">
+            <p className="kicker">{contactContent.title}</p>
+            <h2>{contactContent.intro}</h2>
             <HubspotForm />
-          </div>
+          </article>
 
-          <div className="contact-side">
-            <div className="mini-card">
-              <p className="mini-card__label">Direct contact</p>
-              <a href={business.phoneHref}>{business.phoneDisplay}</a>
-              <a href={business.emailHref}>{business.email}</a>
+          <aside className="contact-side">
+            <div className="panel contact-panel">
+              <p className="kicker">Contact</p>
+              <a className="contact-panel__link" href={business.phoneHref}>
+                {business.phoneDisplay}
+              </a>
+              <a className="contact-panel__link" href={business.emailHref}>
+                {business.email}
+              </a>
             </div>
-            <div className="mini-card">
-              <p className="mini-card__label">Practice locations</p>
-              {locations.map((location) => (
-                <div key={location.name} className="location-block">
-                  <p className="location-block__title">{location.name}</p>
-                  <p>{location.venue}</p>
-                  {location.address.map((line) => (
+
+            <div className="panel contact-panel">
+              <p className="kicker">Our Practice Locations</p>
+              {contactContent.locations.map((location) => (
+                <div key={location.venue + location.lines[0]} className="location-block">
+                  <p className="location-block__title">{location.venue}</p>
+                  {location.lines.map((line) => (
                     <p key={line}>{line}</p>
                   ))}
                 </div>
               ))}
             </div>
+          </aside>
+        </div>
+      </section>
+
+      <section className="section section--tint">
+        <div className="container">
+          <SectionHeading eyebrow="Frequently Asked" title="Frequently Asked" />
+          <div className="faq-list">
+            {contactContent.faqs.map((item) => (
+              <details key={item.question} className="panel faq-item" open={item.question === "What is Hypnotherapy?"}>
+                <summary>{item.question}</summary>
+                {item.paragraphs?.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+                {item.list ? (
+                  <ul className="issue-list">
+                    {item.list.map((entry) => (
+                      <li key={entry}>{entry}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </details>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section section--tinted">
-        <div className="container section__intro">
-          <p className="eyebrow">Frequently Asked</p>
-          <h2>The reassuring education from the original contact page is still here.</h2>
-        </div>
-        <div className="container faq-list">
-          {faqs.map((faq) => (
-            <details key={faq.question} className="faq-item">
-              <summary>{faq.question}</summary>
-              <p>{faq.answer}</p>
-            </details>
-          ))}
-        </div>
-      </section>
+      <QuoteBand quote={contactContent.quote} author={contactContent.author} />
     </>
   );
 }
@@ -592,149 +705,119 @@ function PageResolver() {
 }
 
 function GeneratedPage({ page }) {
-  usePageTitle(page.title);
+  const title = cleanDisplayText(page.title.replace(" | Tim Raja Hypnotherapy", ""));
+  usePageTitle(title);
 
   return (
     <>
       <PageHero
-        badge="Archived Page"
-        title={page.title.replace(" | Tim Raja Hypnotherapy", "")}
-        intro={
-          page.excerpt ||
-          "This route has been preserved from the previous site and re-presented inside the new design."
-        }
-        image={page.image || business.heroImage}
+        eyebrow={business.person}
+        title={title}
+        body={[page.excerpt || business.summary]}
+        image={page.image || images.hero}
       />
       <section className="section">
-        <div className="container article-shell">
-          <article className="article-card">
+        <div className="container article-layout">
+          <article className="panel article-card article-card--wide">
             <ContentStream lines={page.lines} />
           </article>
-          <aside className="article-sidebar">
-            <SidebarCard />
+          <aside className="panel contact-panel">
+            <p className="kicker">{business.freeIntro}</p>
+            <a className="contact-panel__link" href={business.phoneHref}>
+              {business.phoneDisplay}
+            </a>
+            <a className="contact-panel__link" href={business.emailHref}>
+              {business.email}
+            </a>
+            <Link className="button button--solid button--block" to="/contact">
+              {homeContent.contactButton}
+            </Link>
           </aside>
         </div>
       </section>
-      <ContactBand />
     </>
   );
 }
 
-function NotFoundPage() {
-  usePageTitle("Page Not Found");
-
-  return (
-    <section className="section section--full-height">
-      <div className="container empty-state">
-        <p className="eyebrow">404</p>
-        <h1>That page isn’t in the rebuilt site.</h1>
-        <p>
-          The main routes and archived marketing pages have been retained. Head back
-          home or jump to the contact page.
-        </p>
-        <div className="hero__actions">
-          <Link className="button button--solid" to="/">
-            Go home
-          </Link>
-          <Link className="button button--ghost" to="/contact">
-            Contact Tim
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function PageHero({ badge, title, intro, image }) {
+function PageHero({ eyebrow, title, body, image, actions = true }) {
   return (
     <section className="page-hero">
       <div className="container page-hero__grid">
-        <div className="page-hero__copy">
-          <p className="eyebrow">{badge}</p>
-          <h1>{title}</h1>
-          <p>{intro}</p>
-          <div className="hero__actions">
-            <Link className="button button--solid" to="/contact">
-              Book a free introduction
-            </Link>
-            <a className="button button--ghost" href={business.phoneHref}>
-              Call now
-            </a>
-          </div>
+        <div className="panel page-hero__content">
+          {eyebrow ? <p className="kicker">{eyebrow}</p> : null}
+          <h1>{cleanDisplayText(title)}</h1>
+          {body?.map((paragraph) => (
+            <p key={paragraph}>{cleanDisplayText(paragraph)}</p>
+          ))}
+          {actions ? (
+            <ActionRow>
+              <Link className="button button--solid" to="/contact">
+                {homeContent.contactButton}
+              </Link>
+              <a className="button button--ghost" href={business.phoneHref}>
+                {business.phoneDisplay}
+              </a>
+            </ActionRow>
+          ) : null}
         </div>
-        <img className="page-hero__image" src={image} alt={title} />
+        <div className="page-hero__media">
+          <img className="page-hero__image" src={image} alt={cleanDisplayText(title)} />
+        </div>
       </div>
     </section>
   );
 }
 
-function SidebarCard() {
+function SectionHeading({ eyebrow, title, intro }) {
   return (
-    <div className="sidebar-card">
-      <p className="sidebar-card__eyebrow">Need help deciding?</p>
-      <h3>{business.freeIntro}</h3>
-      <p>
-        Speak to Tim directly and get a straight answer on whether hypnotherapy or
-        EMDR is the right fit for your situation.
-      </p>
-      <a className="button button--solid button--block" href={business.phoneHref}>
-        Call {business.phoneDisplay}
-      </a>
-      <Link className="button button--ghost button--block" to="/contact">
-        Open the contact form
-      </Link>
+    <div className="section-heading">
+      {eyebrow ? <p className="kicker">{eyebrow}</p> : null}
+      {title && title.trim() ? <h2>{cleanDisplayText(title)}</h2> : null}
+      {intro ? <p>{cleanDisplayText(intro)}</p> : null}
     </div>
   );
 }
 
-function ContactBand() {
+function ActionRow({ children }) {
+  return <div className="action-row">{children}</div>;
+}
+
+function QuoteBand({ quote, author }) {
   return (
-    <section className="section section--contact-band">
-      <div className="container contact-band">
-        <div>
-          <p className="eyebrow">Ready to talk?</p>
-          <h2>Start with a quick, private introduction and take it from there.</h2>
-        </div>
-        <div className="contact-band__actions">
-          <Link className="button button--solid" to="/contact">
-            Contact Tim
-          </Link>
-          <a className="button button--ghost" href={business.emailHref}>
-            Email directly
-          </a>
-        </div>
+    <section className="quote-band">
+      <div className="quote-band__overlay" />
+      <div className="container quote-band__inner">
+        <p className="quote-band__text">&ldquo;{cleanDisplayText(quote)}&rdquo;</p>
+        <p className="quote-band__author">{cleanDisplayText(author)}</p>
       </div>
     </section>
   );
 }
 
-function LegacyArticle({ slug, badge }) {
-  const { page } = useGeneratedPage(slug);
-  if (!page) {
-    return null;
-  }
-
+function ServiceMatrix() {
   return (
     <section className="section">
-      <div className="container article-shell">
-        <article className="article-card">
-          <p className="article-callout">{badge}</p>
-          <ContentStream lines={page.lines} />
-        </article>
-        <aside className="article-sidebar">
-          <SidebarCard />
-        </aside>
+      <div className="container">
+        <SectionHeading eyebrow="WHAT DO I TREAT?" title=" " />
+        <div className="service-grid">
+          {serviceCategories.map((service) => (
+            <Link key={`${service.label}-${service.item}`} className="service-card" to={service.href}>
+              <p className="service-card__label">{service.label}</p>
+              <h3>{service.item}</h3>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
 function ContentStream({ lines }) {
-  const cleaned = lines.filter((line) => line && !ctaNoise.has(line));
+  const prepared = prepareContentLines(lines);
 
   return (
     <div className="content-stream">
-      {cleaned.map((line, index) => {
+      {prepared.map((line, index) => {
         if (isEyebrow(line)) {
           return (
             <p key={`${line}-${index}`} className="content-stream__eyebrow">
@@ -761,8 +844,55 @@ function ContentStream({ lines }) {
   );
 }
 
+function prepareContentLines(lines = []) {
+  const prepared = [];
+
+  for (let index = 0; index < lines.length; index += 1) {
+    let line = cleanDisplayText(lines[index]);
+
+    if (!line || ctaNoise.has(line) || repeatedLines.has(line)) {
+      continue;
+    }
+
+    if (line === "here" && prepared[prepared.length - 1] === "Click") {
+      prepared[prepared.length - 1] = "Click here";
+      continue;
+    }
+
+    const next = cleanDisplayText(lines[index + 1] || "");
+
+    if (/^[A-Za-z]$/.test(line) && next) {
+      line = `${line}${next}`;
+      index += 1;
+    }
+
+    const previous = prepared[prepared.length - 1];
+    const shouldMerge =
+      previous &&
+      !isStandaloneHeading(previous) &&
+      (previous.length < 18 ||
+        /\b(the|a|an|of|to|with|and|or|in|on|at|for|from)$/i.test(previous) ||
+        previous.endsWith(",") ||
+        previous.endsWith('"') ||
+        line.startsWith(".") ||
+        line.startsWith(",") ||
+        line.startsWith(")") ||
+        line.startsWith("-") ||
+        /^[a-z]/.test(line));
+
+    if (shouldMerge) {
+      prepared[prepared.length - 1] = joinText(previous, line);
+      continue;
+    }
+
+    prepared.push(line);
+  }
+
+  return prepared;
+}
+
 function isEyebrow(line) {
-  return line.length < 32 && line === line.toUpperCase() && /[A-Z]/.test(line);
+  return line.length <= 36 && line === line.toUpperCase() && /[A-Z]/.test(line);
 }
 
 function isHeading(line) {
@@ -770,16 +900,17 @@ function isHeading(line) {
     return true;
   }
 
-  if (line.length < 68 && /^[A-Z][A-Za-z0-9’'(),/&\-\s]+$/.test(line) && !line.endsWith(".")) {
-    return true;
-  }
+  return line.length <= 82 && !line.endsWith(".") && /^[A-Z0-9"'(]/.test(line);
+}
 
-  return false;
+function isStandaloneHeading(line) {
+  return isEyebrow(line) || isHeading(line);
 }
 
 function HubspotForm() {
   useEffect(() => {
     const target = document.querySelector("#hubspot-contact-form");
+
     if (!target) {
       return undefined;
     }
@@ -787,7 +918,7 @@ function HubspotForm() {
     let cancelled = false;
 
     const createForm = () => {
-      if (cancelled || !window.hbspt || !target || target.children.length > 0) {
+      if (cancelled || !window.hbspt || target.children.length > 0) {
         return;
       }
 
@@ -803,6 +934,7 @@ function HubspotForm() {
       createForm();
     } else {
       const existingScript = document.querySelector('script[data-hubspot-form="true"]');
+
       if (existingScript) {
         existingScript.addEventListener("load", createForm, { once: true });
       } else {
@@ -827,15 +959,15 @@ function Footer() {
   return (
     <footer className="site-footer">
       <div className="container site-footer__grid">
-        <div>
-          <img className="site-footer__logo" src={business.logo} alt={business.siteName} />
-          <p>{business.subtitle}</p>
+        <div className="site-footer__brand">
+          <img className="site-footer__logo" src={images.logo} alt={business.siteName} />
+          <p>{footerContent.description}</p>
           <a href={business.phoneHref}>{business.phoneDisplay}</a>
           <a href={business.emailHref}>{business.email}</a>
         </div>
 
         <div>
-          <p className="site-footer__label">Key pages</p>
+          <p className="site-footer__label">Pages</p>
           <div className="site-footer__links">
             {navLinks.map((link) => (
               <Link key={link.href} to={link.href}>
@@ -845,19 +977,42 @@ function Footer() {
           </div>
         </div>
 
-        <div>
-          <p className="site-footer__label">Locations</p>
-          <div className="site-footer__links">
-            {locations.map((location) => (
-              <p key={location.name}>
-                {location.name}
-                <span>{location.venue}</span>
-              </p>
-            ))}
+        {footerContent.columns.map((column) => (
+          <div key={column.title + column.items[0]}>
+            <p className="site-footer__label">{column.title}</p>
+            <div className="site-footer__links">
+              {column.items.map((item) => (
+                <p key={item}>{item}</p>
+              ))}
+            </div>
           </div>
-        </div>
+        ))}
+      </div>
+      <div className="container site-footer__bottom">
+        <p>{footerContent.legal}</p>
       </div>
     </footer>
+  );
+}
+
+function NotFoundPage() {
+  usePageTitle("Page Not Found");
+
+  return (
+    <section className="section section--full-height">
+      <div className="container empty-state">
+        <p className="kicker">404</p>
+        <h1>Page not found.</h1>
+        <ActionRow>
+          <Link className="button button--solid" to="/">
+            Home
+          </Link>
+          <Link className="button button--ghost" to="/contact">
+            Contact
+          </Link>
+        </ActionRow>
+      </div>
+    </section>
   );
 }
 
@@ -865,9 +1020,8 @@ function LoadingPage() {
   return (
     <section className="section section--full-height">
       <div className="container empty-state">
-        <p className="eyebrow">Loading</p>
-        <h1>Opening the archived page…</h1>
-        <p>The route exists. The content chunk is just being loaded separately.</p>
+        <p className="kicker">Loading</p>
+        <h1>Opening the page...</h1>
       </div>
     </section>
   );
