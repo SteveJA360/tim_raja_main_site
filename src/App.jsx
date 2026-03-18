@@ -230,16 +230,15 @@ function HomePage() {
   return (
     <>
       <section className="home-hero">
-        <div className="container home-hero__grid">
-          <div className="home-hero__media">
-            <img className="home-hero__image" src={images.hero} alt={business.person} />
-          </div>
-
+        <div className="home-hero__bg" />
+        <div className="home-hero__deco" />
+        <div className="home-hero__dots" />
+        <div className="container home-hero__inner">
           <div className="panel home-hero__content">
             <p className="kicker">{business.person}</p>
             <p className="meta-line">{business.credentials}</p>
             <h1>{business.subtitle}</h1>
-            <p>{business.summary}</p>
+            <p className="home-hero__summary">{business.summary}</p>
             <h2 className="home-hero__subheading">{homeContent.heroTitle}</h2>
             <p>{homeContent.heroText}</p>
 
@@ -252,13 +251,28 @@ function HomePage() {
               </a>
             </ActionRow>
 
-            <div className="panel intro-panel">
+            <div className="intro-panel">
               <p className="kicker">{business.freeIntro}</p>
               <p>{business.introOffer}</p>
               <p>{business.introOfferDetail}</p>
               <Link className="button button--soft" to="/contact">
                 {homeContent.contactButton}
               </Link>
+            </div>
+          </div>
+
+          <div className="home-hero__side">
+            <div className="hero-stat">
+              <span className="hero-stat__num">25+</span>
+              <span className="hero-stat__label">Years Corporate Experience</span>
+            </div>
+            <div className="hero-stat">
+              <span className="hero-stat__num">4–6</span>
+              <span className="hero-stat__label">Sessions to See Real Results</span>
+            </div>
+            <div className="hero-stat">
+              <span className="hero-stat__num">Free</span>
+              <span className="hero-stat__label">20 Minute Zoom Introduction</span>
             </div>
           </div>
         </div>
@@ -796,14 +810,21 @@ function QuoteBand({ quote, author }) {
 
 function ServiceMatrix() {
   return (
-    <section className="section">
+    <section className="section section--services">
       <div className="container">
-        <SectionHeading eyebrow="WHAT DO I TREAT?" title=" " />
+        <SectionHeading eyebrow="WHAT DO I TREAT?" title="Areas I Can Help With" />
         <div className="service-grid">
           {serviceCategories.map((service) => (
             <Link key={`${service.label}-${service.item}`} className="service-card" to={service.href}>
-              <p className="service-card__label">{service.label}</p>
-              <h3>{service.item}</h3>
+              {service.image && (
+                <div className="service-card__img">
+                  <img src={service.image} alt={service.item} loading="lazy" />
+                </div>
+              )}
+              <div className="service-card__body">
+                <p className="service-card__label">{service.label}</p>
+                <h3>{service.item}</h3>
+              </div>
             </Link>
           ))}
         </div>
