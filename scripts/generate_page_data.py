@@ -77,7 +77,7 @@ REPLACEMENTS = {
 
 def fix_text(text: str) -> str:
     text = text.replace("\u200b", "")
-    if any(marker in text for marker in ("â", "Â", "î", "ï")):
+    if any(marker in text for marker in ("\u00c3", "\u00c2", "\u00e2", "\u00ee", "\u00ef")):
         try:
             repaired = text.encode("cp1252").decode("utf-8")
             text = repaired
