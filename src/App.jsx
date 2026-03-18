@@ -43,15 +43,15 @@ const repeatedLines = new Set([
 ]);
 
 const displayReplacements = [
-  ["â€™", "'"],
-  ["â€œ", '"'],
-  ["â€", '"'],
-  ["â€˜", "'"],
-  ["â€“", "-"],
-  ["â€”", "-"],
-  ["â€¦", "..."],
-  ["Â", ""],
-  ["Ł", "£"],
+  ["â\u20ac\u2122", "'"],
+  ["â\u20ac\u0153", '"'],
+  ["â\u20ac", '"'],
+  ["â\u20ac\u02dc", "'"],
+  ["â\u20ac\u201c", "-"],
+  ["â\u20ac\u201d", "-"],
+  ["â\u20ac\u00a6", "..."],
+  ["\u00c2", ""],
+  ["\u0141", "\u00a3"],
 ];
 
 let generatedPagesCache;
@@ -59,11 +59,9 @@ let generatedPagesPromise;
 
 function cleanDisplayText(value = "") {
   let text = `${value}`;
-
   for (const [before, after] of displayReplacements) {
     text = text.replaceAll(before, after);
   }
-
   return text.replace(/\s+/g, " ").trim();
 }
 
@@ -72,14 +70,8 @@ function normalizePath(pathname) {
 }
 
 function formatTitle(title) {
-  if (!title) {
-    return business.siteName;
-  }
-
-  if (title.includes("Tim Raja Hypnotherapy")) {
-    return cleanDisplayText(title);
-  }
-
+  if (!title) return business.siteName;
+  if (title.includes("Tim Raja Hypnotherapy")) return cleanDisplayText(title);
   return `${cleanDisplayText(title)} | ${business.siteName}`;
 }
 
@@ -91,17 +83,13 @@ function joinText(previous, next) {
 }
 
 function loadGeneratedPages() {
-  if (generatedPagesCache) {
-    return Promise.resolve(generatedPagesCache);
-  }
-
+  if (generatedPagesCache) return Promise.resolve(generatedPagesCache);
   if (!generatedPagesPromise) {
     generatedPagesPromise = import("./data/generatedPages").then((module) => {
       generatedPagesCache = module.generatedPages;
       return generatedPagesCache;
     });
   }
-
   return generatedPagesPromise;
 }
 
@@ -112,29 +100,18 @@ function useGeneratedPage(slug) {
   useEffect(() => {
     let active = true;
     const cached = generatedPagesCache?.find((item) => item.slug === slug);
-
     if (cached) {
       setPage(cached);
       setLoading(false);
-      return () => {
-        active = false;
-      };
+      return () => { active = false; };
     }
-
     setLoading(true);
-
     loadGeneratedPages().then((pages) => {
-      if (!active) {
-        return;
-      }
-
+      if (!active) return;
       setPage(pages.find((item) => item.slug === slug));
       setLoading(false);
     });
-
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, [slug]);
 
   return { page, loading };
@@ -148,21 +125,14 @@ function usePageTitle(title) {
 
 function ScrollToTop() {
   const location = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
-
+  useEffect(() => { window.scrollTo(0, 0); }, [location.pathname]);
   return null;
 }
 
 function AppShell() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [location.pathname]);
+  useEffect(() => { setMenuOpen(false); }, [location.pathname]);
 
   return (
     <div className="site-shell">
@@ -187,7 +157,7 @@ function AppShell() {
 function Header({ menuOpen, setMenuOpen }) {
   return (
     <header className="site-header">
-      <div className="site-header__bar" />
+      <div className="site-header__accent" />
       <div className="container site-header__inner">
         <Link className="brand" to="/" aria-label={business.siteName}>
           <img className="brand__logo" src={images.logo} alt={business.siteName} />
@@ -229,28 +199,24 @@ function HomePage() {
 
   return (
     <>
+      {/* HERO */}
       <section className="home-hero">
-        <div className="home-hero__bg" />
-        <div className="home-hero__deco" />
-        <div className="home-hero__dots" />
         <div className="container home-hero__inner">
-          <div className="panel home-hero__content">
+          <div className="home-hero__left">
             <p className="kicker">{business.person}</p>
             <p className="meta-line">{business.credentials}</p>
-            <h1>{business.subtitle}</h1>
+            <h1 className="home-hero__h1">{business.subtitle}</h1>
             <p className="home-hero__summary">{business.summary}</p>
-            <h2 className="home-hero__subheading">{homeContent.heroTitle}</h2>
-            <p>{homeContent.heroText}</p>
-
+            <h2 className="home-hero__hook">{homeContent.heroTitle}</h2>
+            <p className="home-hero__text">{homeContent.heroText}</p>
             <ActionRow>
               <Link className="button button--solid" to="/contact">
                 {homeContent.introButton}
               </Link>
-              <a className="button button--ghost" href={business.phoneHref}>
+              <a className="button button--outline" href={business.phoneHref}>
                 {business.phoneDisplay}
               </a>
             </ActionRow>
-
             <div className="intro-panel">
               <p className="kicker">{business.freeIntro}</p>
               <p>{business.introOffer}</p>
@@ -261,23 +227,24 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="home-hero__side">
-            <div className="hero-stat">
-              <span className="hero-stat__num">25+</span>
-              <span className="hero-stat__label">Years Corporate Experience</span>
+          <div className="home-hero__right">
+            <div className="home-hero__blob" />
+            <div className="home-hero__img-wrap">
+              <img className="home-hero__portrait" src={images.about} alt={business.person} />
             </div>
-            <div className="hero-stat">
-              <span className="hero-stat__num">4–6</span>
-              <span className="hero-stat__label">Sessions to See Real Results</span>
+            <div className="hero-badge hero-badge--tl">
+              <span className="hero-badge__num">25+</span>
+              <span className="hero-badge__txt">Years Experience</span>
             </div>
-            <div className="hero-stat">
-              <span className="hero-stat__num">Free</span>
-              <span className="hero-stat__label">20 Minute Zoom Introduction</span>
+            <div className="hero-badge hero-badge--br">
+              <span className="hero-badge__num">Free</span>
+              <span className="hero-badge__txt">Intro Zoom Call</span>
             </div>
           </div>
         </div>
       </section>
 
+      {/* PROOF STRIP */}
       <section className="proof-strip">
         <div className="container proof-strip__inner">
           {business.proofLogos.map((logo) => (
@@ -286,14 +253,36 @@ function HomePage() {
         </div>
       </section>
 
+      {/* STATS STRIP */}
+      <section className="stats-strip">
+        <div className="container stats-strip__grid">
+          <div className="stat-item">
+            <p className="stat-item__num">25+</p>
+            <p className="stat-item__label">Years Industry Experience</p>
+          </div>
+          <div className="stat-item">
+            <p className="stat-item__num">4–6</p>
+            <p className="stat-item__label">Sessions to See Results</p>
+          </div>
+          <div className="stat-item">
+            <p className="stat-item__num">100%</p>
+            <p className="stat-item__label">Personalised Treatment</p>
+          </div>
+          <div className="stat-item">
+            <p className="stat-item__num">Free</p>
+            <p className="stat-item__label">20 Min Intro Zoom Call</p>
+          </div>
+        </div>
+      </section>
+
+      {/* BREAKTHROUGH BAND */}
       <section className="image-band">
-        <div className="image-band__backdrop" />
         <div className="container image-band__inner">
-          <div className="panel image-band__panel">
+          <div className="image-band__panel">
             <p className="kicker">{homeContent.breakthroughEyebrow}</p>
             <h2>{homeContent.breakthroughTitle}</h2>
-            {homeContent.breakthroughParagraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+            {homeContent.breakthroughParagraphs.map((p) => (
+              <p key={p}>{p}</p>
             ))}
             <ActionRow>
               <Link className="button button--solid" to="/contact">
@@ -304,30 +293,36 @@ function HomePage() {
         </div>
       </section>
 
+      {/* BENEFIT CARDS */}
       <section className="section">
-        <div className="container feature-grid">
-          {homeContent.benefitPoints.map((point) => (
-            <article key={point} className="panel feature-card">
-              <p>{point}</p>
-            </article>
-          ))}
+        <div className="container">
+          <SectionHeading eyebrow="WHY CHOOSE HYPNOTHERAPY?" title="The Difference It Makes" />
+          <div className="benefit-grid">
+            {homeContent.benefitPoints.map((point, index) => (
+              <article key={point} className={`benefit-card benefit-card--${index + 1}`}>
+                <p className="benefit-card__num">0{index + 1}</p>
+                <p>{point}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
+      {/* SERVICE MATRIX */}
       <ServiceMatrix />
 
-      <section className="section">
+      {/* FAQ */}
+      <section className="section section--tint">
         <div className="container faq-layout">
-          <article className="panel faq-layout__intro">
+          <article className="faq-layout__intro">
             <SectionHeading
               eyebrow={homeContent.questions.eyebrow}
               title={homeContent.questions.title}
             />
-            {homeContent.questions.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+            {homeContent.questions.paragraphs.map((p) => (
+              <p key={p}>{p}</p>
             ))}
           </article>
-
           <div className="faq-layout__list">
             {homeContent.faqs.map((item) => (
               <article key={item.question} className="panel faq-card">
@@ -339,39 +334,41 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="section section--tint">
+      {/* ABOUT TIM */}
+      <section className="section">
         <div className="container split-section">
           <div className="split-section__content">
             <SectionHeading eyebrow={homeContent.about.eyebrow} title={business.person} />
-            {homeContent.about.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+            {homeContent.about.paragraphs.map((p) => (
+              <p key={p}>{p}</p>
             ))}
-            <div className="proof-strip__inner proof-strip__inner--compact">
+            <div className="proof-logos--compact">
               {business.proofLogos.map((logo) => (
                 <img key={logo.src} src={logo.src} alt={logo.alt} />
               ))}
             </div>
           </div>
-
           <div className="split-section__media">
             <img className="split-section__image" src={images.about} alt={business.person} />
           </div>
         </div>
       </section>
 
-      <section className="section">
+      {/* RESEARCH */}
+      <section className="section section--tint">
         <div className="container split-section split-section--reverse">
           <div className="split-section__media">
             <img className="split-section__image" src={images.research} alt="Hypnotherapy research" />
           </div>
-
-          <article className="panel split-section__content">
+          <article className="split-section__content">
             <p className="kicker">{homeContent.research.eyebrow}</p>
-            {homeContent.research.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+            {homeContent.research.paragraphs.map((p) => (
+              <p key={p}>{p}</p>
             ))}
-            <p className="research-quote">&ldquo;{homeContent.research.quote}&rdquo;</p>
-            <p className="research-credit">{homeContent.research.author}</p>
+            <blockquote className="research-blockquote">
+              &ldquo;{homeContent.research.quote}&rdquo;
+              <cite>{homeContent.research.author}</cite>
+            </blockquote>
           </article>
         </div>
       </section>
@@ -392,12 +389,11 @@ function AboutPage() {
         body={[aboutContent.intro]}
         image={images.about}
       />
-
       <section className="section">
         <div className="container split-section">
           <div className="split-section__content">
-            {aboutContent.story.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+            {aboutContent.story.map((p) => (
+              <p key={p}>{p}</p>
             ))}
           </div>
           <div className="split-section__media">
@@ -405,11 +401,10 @@ function AboutPage() {
           </div>
         </div>
       </section>
-
       <section className="section section--tint">
         <div className="container">
-          <SectionHeading eyebrow="My Values & Beliefs" title="My Values & Beliefs" />
-          <div className="feature-grid">
+          <SectionHeading eyebrow="My Values" title="My Values & Beliefs" />
+          <div className="card-grid">
             {aboutContent.values.map((value) => (
               <article key={value.title} className="panel feature-card">
                 <h3>{value.title}</h3>
@@ -419,7 +414,6 @@ function AboutPage() {
           </div>
         </div>
       </section>
-
       <section className="section">
         <div className="container">
           <SectionHeading eyebrow="Testimonials" title={testimonialsContent.title} />
@@ -433,7 +427,6 @@ function AboutPage() {
           </div>
         </div>
       </section>
-
       <QuoteBand quote={aboutContent.quote} author={aboutContent.author} />
     </>
   );
@@ -450,19 +443,17 @@ function HypnotherapyPage() {
         body={hypnotherapyContent.intro}
         image={images.hero}
       />
-
       <section className="section">
         <div className="container">
-          <article className="panel statement-card">
+          <article className="statement-card panel">
             <p className="kicker">{hypnotherapyContent.overview.eyebrow}</p>
             <h2>{hypnotherapyContent.overview.title}</h2>
             <p>{hypnotherapyContent.overview.text}</p>
           </article>
         </div>
       </section>
-
       <section className="section section--tint">
-        <div className="container feature-grid">
+        <div className="container card-grid">
           {hypnotherapyContent.features.map((feature) => (
             <article key={feature.title} className="panel feature-card">
               <h3>{feature.title}</h3>
@@ -471,7 +462,6 @@ function HypnotherapyPage() {
           ))}
         </div>
       </section>
-
       <section className="section">
         <div className="container faq-layout faq-layout--single">
           {hypnotherapyContent.faqs.map((item) => (
@@ -482,15 +472,14 @@ function HypnotherapyPage() {
           ))}
         </div>
       </section>
-
-      <section className="section">
+      <section className="section section--tint">
         <div className="container">
           <SectionHeading
             eyebrow="Hypnotherapy"
             title={hypnotherapyContent.examplesTitle}
             intro={hypnotherapyContent.examplesIntro}
           />
-          <div className="feature-grid feature-grid--compact">
+          <div className="card-grid card-grid--2">
             {hypnotherapyContent.examples.map((item) => (
               <article key={item.name} className="panel feature-card">
                 <h3>{item.name}</h3>
@@ -503,7 +492,6 @@ function HypnotherapyPage() {
           </div>
         </div>
       </section>
-
       <ServiceMatrix />
     </>
   );
@@ -515,13 +503,12 @@ function EMDRPage() {
   return (
     <>
       <PageHero eyebrow="EMDR" title={emdrContent.title} body={emdrContent.intro} image={images.emdr} />
-
       <section className="section">
         <div className="container split-section">
-          <article className="panel split-section__content">
+          <article className="split-section__content">
             <SectionHeading eyebrow="EMDR" title={emdrContent.difference.title} />
-            {emdrContent.difference.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+            {emdrContent.difference.paragraphs.map((p) => (
+              <p key={p}>{p}</p>
             ))}
           </article>
           <div className="split-section__media">
@@ -529,10 +516,9 @@ function EMDRPage() {
           </div>
         </div>
       </section>
-
       <section className="section section--tint">
         <div className="container">
-          <SectionHeading eyebrow="EMDR" title={emdrContent.stepsTitle} />
+          <SectionHeading eyebrow="EMDR Process" title={emdrContent.stepsTitle} />
           <div className="timeline">
             {emdrContent.steps.map((step, index) => (
               <article key={step.title} className="panel timeline__item">
@@ -544,33 +530,25 @@ function EMDRPage() {
           </div>
         </div>
       </section>
-
       <section className="section">
-        <div className="container">
-          <div className="feature-grid feature-grid--compact">
-            {emdrContent.evidence.map((paragraph) => (
-              <article key={paragraph} className="panel feature-card">
-                <p>{paragraph}</p>
-              </article>
-            ))}
-          </div>
+        <div className="container card-grid card-grid--2">
+          {emdrContent.evidence.map((p) => (
+            <article key={p} className="panel feature-card">
+              <p>{p}</p>
+            </article>
+          ))}
         </div>
       </section>
-
-      <section className="section">
-        <div className="container">
-          <SectionHeading eyebrow="My Values & Beliefs" title="My Values & Beliefs" />
-          <div className="feature-grid">
-            {emdrContent.values.map((value) => (
-              <article key={value.title} className="panel feature-card">
-                <h3>{value.title}</h3>
-                <p>{value.text}</p>
-              </article>
-            ))}
-          </div>
+      <section className="section section--tint">
+        <div className="container card-grid">
+          {emdrContent.values.map((value) => (
+            <article key={value.title} className="panel feature-card">
+              <h3>{value.title}</h3>
+              <p>{value.text}</p>
+            </article>
+          ))}
         </div>
       </section>
-
       <QuoteBand quote={emdrContent.quote} author={emdrContent.author} />
     </>
   );
@@ -581,8 +559,12 @@ function PricingPage() {
 
   return (
     <>
-      <PageHero eyebrow={business.person} title={pricingContent.title} body={pricingContent.intro} image={images.pricing} />
-
+      <PageHero
+        eyebrow={business.person}
+        title={pricingContent.title}
+        body={pricingContent.intro}
+        image={images.pricing}
+      />
       <section className="section">
         <div className="container pricing-grid">
           {pricingContent.cards.map((card) => (
@@ -590,16 +572,13 @@ function PricingPage() {
               <p className="kicker">{card.eyebrow}</p>
               <h2>{card.title}</h2>
               {card.prices.map((price) => (
-                <p key={price} className="pricing-card__price-line">
-                  {price}
-                </p>
+                <p key={price} className="pricing-card__price-line">{price}</p>
               ))}
               <p>{card.text}</p>
             </article>
           ))}
         </div>
       </section>
-
       <ServiceMatrix />
     </>
   );
@@ -616,7 +595,6 @@ function TestimonialsPage() {
         body={[testimonialsContent.subtitle, testimonialsContent.intro]}
         image={images.contact}
       />
-
       <section className="section">
         <div className="container testimonial-grid testimonial-grid--full">
           {testimonialsContent.items.map((item) => (
@@ -627,7 +605,6 @@ function TestimonialsPage() {
           ))}
         </div>
       </section>
-
       <QuoteBand quote={testimonialsContent.quote} author={testimonialsContent.author} />
     </>
   );
@@ -638,8 +615,12 @@ function ContactPage() {
 
   return (
     <>
-      <PageHero eyebrow={contactContent.title} title={contactContent.title} body={[contactContent.intro]} image={images.contact} />
-
+      <PageHero
+        eyebrow={contactContent.title}
+        title={contactContent.title}
+        body={[contactContent.intro]}
+        image={images.contact}
+      />
       <section className="section">
         <div className="container contact-layout">
           <article className="panel contact-form-card">
@@ -647,18 +628,12 @@ function ContactPage() {
             <h2>{contactContent.intro}</h2>
             <HubspotForm />
           </article>
-
           <aside className="contact-side">
             <div className="panel contact-panel">
               <p className="kicker">Contact</p>
-              <a className="contact-panel__link" href={business.phoneHref}>
-                {business.phoneDisplay}
-              </a>
-              <a className="contact-panel__link" href={business.emailHref}>
-                {business.email}
-              </a>
+              <a className="contact-panel__link" href={business.phoneHref}>{business.phoneDisplay}</a>
+              <a className="contact-panel__link" href={business.emailHref}>{business.email}</a>
             </div>
-
             <div className="panel contact-panel">
               <p className="kicker">Our Practice Locations</p>
               {contactContent.locations.map((location) => (
@@ -673,22 +648,21 @@ function ContactPage() {
           </aside>
         </div>
       </section>
-
       <section className="section section--tint">
         <div className="container">
-          <SectionHeading eyebrow="Frequently Asked" title="Frequently Asked" />
+          <SectionHeading eyebrow="Frequently Asked" title="Frequently Asked Questions" />
           <div className="faq-list">
             {contactContent.faqs.map((item) => (
-              <details key={item.question} className="panel faq-item" open={item.question === "What is Hypnotherapy?"}>
+              <details
+                key={item.question}
+                className="panel faq-item"
+                open={item.question === "What is Hypnotherapy?"}
+              >
                 <summary>{item.question}</summary>
-                {item.paragraphs?.map((paragraph) => (
-                  <p key={paragraph}>{paragraph}</p>
-                ))}
+                {item.paragraphs?.map((p) => <p key={p}>{p}</p>)}
                 {item.list ? (
                   <ul className="issue-list">
-                    {item.list.map((entry) => (
-                      <li key={entry}>{entry}</li>
-                    ))}
+                    {item.list.map((entry) => <li key={entry}>{entry}</li>)}
                   </ul>
                 ) : null}
               </details>
@@ -696,7 +670,6 @@ function ContactPage() {
           </div>
         </div>
       </section>
-
       <QuoteBand quote={contactContent.quote} author={contactContent.author} />
     </>
   );
@@ -706,15 +679,8 @@ function PageResolver() {
   const location = useLocation();
   const slug = normalizePath(location.pathname);
   const { page, loading } = useGeneratedPage(slug);
-
-  if (loading && !page) {
-    return <LoadingPage />;
-  }
-
-  if (!page) {
-    return <NotFoundPage />;
-  }
-
+  if (loading && !page) return <LoadingPage />;
+  if (!page) return <NotFoundPage />;
   return <GeneratedPage page={page} />;
 }
 
@@ -737,12 +703,8 @@ function GeneratedPage({ page }) {
           </article>
           <aside className="panel contact-panel">
             <p className="kicker">{business.freeIntro}</p>
-            <a className="contact-panel__link" href={business.phoneHref}>
-              {business.phoneDisplay}
-            </a>
-            <a className="contact-panel__link" href={business.emailHref}>
-              {business.email}
-            </a>
+            <a className="contact-panel__link" href={business.phoneHref}>{business.phoneDisplay}</a>
+            <a className="contact-panel__link" href={business.emailHref}>{business.email}</a>
             <Link className="button button--solid button--block" to="/contact">
               {homeContent.contactButton}
             </Link>
@@ -756,26 +718,26 @@ function GeneratedPage({ page }) {
 function PageHero({ eyebrow, title, body, image, actions = true }) {
   return (
     <section className="page-hero">
-      <div className="container page-hero__grid">
-        <div className="panel page-hero__content">
+      <div className="container page-hero__inner">
+        <div className="page-hero__content">
           {eyebrow ? <p className="kicker">{eyebrow}</p> : null}
-          <h1>{cleanDisplayText(title)}</h1>
-          {body?.map((paragraph) => (
-            <p key={paragraph}>{cleanDisplayText(paragraph)}</p>
+          <h1 className="page-hero__h1">{cleanDisplayText(title)}</h1>
+          {body?.map((p) => (
+            <p key={p} className="page-hero__body">{cleanDisplayText(p)}</p>
           ))}
           {actions ? (
             <ActionRow>
               <Link className="button button--solid" to="/contact">
                 {homeContent.contactButton}
               </Link>
-              <a className="button button--ghost" href={business.phoneHref}>
+              <a className="button button--outline" href={business.phoneHref}>
                 {business.phoneDisplay}
               </a>
             </ActionRow>
           ) : null}
         </div>
         <div className="page-hero__media">
-          <img className="page-hero__image" src={image} alt={cleanDisplayText(title)} />
+          <img className="page-hero__img" src={image} alt={cleanDisplayText(title)} />
         </div>
       </div>
     </section>
@@ -786,8 +748,8 @@ function SectionHeading({ eyebrow, title, intro }) {
   return (
     <div className="section-heading">
       {eyebrow ? <p className="kicker">{eyebrow}</p> : null}
-      {title && title.trim() ? <h2>{cleanDisplayText(title)}</h2> : null}
-      {intro ? <p>{cleanDisplayText(intro)}</p> : null}
+      {title && title.trim() ? <h2 className="section-heading__h2">{cleanDisplayText(title)}</h2> : null}
+      {intro ? <p className="section-heading__intro">{cleanDisplayText(intro)}</p> : null}
     </div>
   );
 }
@@ -799,7 +761,6 @@ function ActionRow({ children }) {
 function QuoteBand({ quote, author }) {
   return (
     <section className="quote-band">
-      <div className="quote-band__overlay" />
       <div className="container quote-band__inner">
         <p className="quote-band__text">&ldquo;{cleanDisplayText(quote)}&rdquo;</p>
         <p className="quote-band__author">{cleanDisplayText(author)}</p>
@@ -815,7 +776,11 @@ function ServiceMatrix() {
         <SectionHeading eyebrow="WHAT DO I TREAT?" title="Areas I Can Help With" />
         <div className="service-grid">
           {serviceCategories.map((service) => (
-            <Link key={`${service.label}-${service.item}`} className="service-card" to={service.href}>
+            <Link
+              key={`${service.label}-${service.item}`}
+              className="service-card"
+              to={service.href}
+            >
               {service.image && (
                 <div className="service-card__img">
                   <img src={service.image} alt={service.item} loading="lazy" />
@@ -841,24 +806,16 @@ function ContentStream({ lines }) {
       {prepared.map((line, index) => {
         if (isEyebrow(line)) {
           return (
-            <p key={`${line}-${index}`} className="content-stream__eyebrow">
-              {line}
-            </p>
+            <p key={`${line}-${index}`} className="content-stream__eyebrow">{line}</p>
           );
         }
-
         if (isHeading(line)) {
           return (
-            <h3 key={`${line}-${index}`} className="content-stream__heading">
-              {line}
-            </h3>
+            <h3 key={`${line}-${index}`} className="content-stream__heading">{line}</h3>
           );
         }
-
         return (
-          <p key={`${line}-${index}`} className="content-stream__paragraph">
-            {line}
-          </p>
+          <p key={`${line}-${index}`} className="content-stream__paragraph">{line}</p>
         );
       })}
     </div>
@@ -871,9 +828,7 @@ function prepareContentLines(lines = []) {
   for (let index = 0; index < lines.length; index += 1) {
     let line = cleanDisplayText(lines[index]);
 
-    if (!line || ctaNoise.has(line) || repeatedLines.has(line)) {
-      continue;
-    }
+    if (!line || ctaNoise.has(line) || repeatedLines.has(line)) continue;
 
     if (line === "here" && prepared[prepared.length - 1] === "Click") {
       prepared[prepared.length - 1] = "Click here";
@@ -917,10 +872,7 @@ function isEyebrow(line) {
 }
 
 function isHeading(line) {
-  if (line.endsWith("?")) {
-    return true;
-  }
-
+  if (line.endsWith("?")) return true;
   return line.length <= 82 && !line.endsWith(".") && /^[A-Z0-9"'(]/.test(line);
 }
 
@@ -931,18 +883,11 @@ function isStandaloneHeading(line) {
 function HubspotForm() {
   useEffect(() => {
     const target = document.querySelector("#hubspot-contact-form");
-
-    if (!target) {
-      return undefined;
-    }
-
+    if (!target) return undefined;
     let cancelled = false;
 
     const createForm = () => {
-      if (cancelled || !window.hbspt || target.children.length > 0) {
-        return;
-      }
-
+      if (cancelled || !window.hbspt || target.children.length > 0) return;
       window.hbspt.forms.create({
         portalId: 25625184,
         formId: "1e95675d-f51a-4346-9cb2-c5cb15c06366",
@@ -955,7 +900,6 @@ function HubspotForm() {
       createForm();
     } else {
       const existingScript = document.querySelector('script[data-hubspot-form="true"]');
-
       if (existingScript) {
         existingScript.addEventListener("load", createForm, { once: true });
       } else {
@@ -968,9 +912,7 @@ function HubspotForm() {
       }
     }
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   return <div id="hubspot-contact-form" className="hubspot-form" />;
@@ -986,25 +928,19 @@ function Footer() {
           <a href={business.phoneHref}>{business.phoneDisplay}</a>
           <a href={business.emailHref}>{business.email}</a>
         </div>
-
         <div>
           <p className="site-footer__label">Pages</p>
           <div className="site-footer__links">
             {navLinks.map((link) => (
-              <Link key={link.href} to={link.href}>
-                {link.label}
-              </Link>
+              <Link key={link.href} to={link.href}>{link.label}</Link>
             ))}
           </div>
         </div>
-
         {footerContent.columns.map((column) => (
           <div key={column.title + column.items[0]}>
             <p className="site-footer__label">{column.title}</p>
             <div className="site-footer__links">
-              {column.items.map((item) => (
-                <p key={item}>{item}</p>
-              ))}
+              {column.items.map((item) => <p key={item}>{item}</p>)}
             </div>
           </div>
         ))}
@@ -1018,19 +954,14 @@ function Footer() {
 
 function NotFoundPage() {
   usePageTitle("Page Not Found");
-
   return (
     <section className="section section--full-height">
       <div className="container empty-state">
         <p className="kicker">404</p>
         <h1>Page not found.</h1>
         <ActionRow>
-          <Link className="button button--solid" to="/">
-            Home
-          </Link>
-          <Link className="button button--ghost" to="/contact">
-            Contact
-          </Link>
+          <Link className="button button--solid" to="/">Home</Link>
+          <Link className="button button--outline" to="/contact">Contact</Link>
         </ActionRow>
       </div>
     </section>
