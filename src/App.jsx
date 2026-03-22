@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import {
   BrowserRouter,
   Link,
@@ -43,13 +43,13 @@ const repeatedLines = new Set([
 ]);
 
 const displayReplacements = [
-  ["â\u20ac\u2122", "'"],
-  ["â\u20ac\u0153", '"'],
-  ["â\u20ac", '"'],
-  ["â\u20ac\u02dc", "'"],
-  ["â\u20ac\u201c", "-"],
-  ["â\u20ac\u201d", "-"],
-  ["â\u20ac\u00a6", "..."],
+  ["Ã¢\u20ac\u2122", "'"],
+  ["Ã¢\u20ac\u0153", '"'],
+  ["Ã¢\u20ac", '"'],
+  ["Ã¢\u20ac\u02dc", "'"],
+  ["Ã¢\u20ac\u201c", "-"],
+  ["Ã¢\u20ac\u201d", "-"],
+  ["Ã¢\u20ac\u00a6", "..."],
   ["\u00c2", ""],
   ["\u0141", "\u00a3"],
 ];
@@ -280,9 +280,9 @@ function HomePage() {
   usePageTitle(business.fullTitle);
 
   return (
-    <>
+    <div className="page-layout page-layout--home">
       {/* HERO */}
-      <section className="home-hero">
+      <section className="home-hero page-section home-section home-section--hero">
         <div className="container home-hero__inner">
           <div className="home-hero__left">
             <p className="kicker">{business.person}</p>
@@ -327,7 +327,7 @@ function HomePage() {
       </section>
 
       {/* PROOF STRIP */}
-      <section className="proof-strip">
+      <section className="proof-strip page-section home-section home-section--proof">
         <div className="container proof-strip__inner">
           {business.proofLogos.map((logo) => (
             <img key={logo.src} src={logo.src} alt={logo.alt} />
@@ -336,14 +336,14 @@ function HomePage() {
       </section>
 
       {/* STATS STRIP */}
-      <section className="stats-strip">
+      <section className="stats-strip page-section home-section home-section--stats">
         <div className="container stats-strip__grid">
           <div className="stat-item">
             <p className="stat-item__num">25+</p>
             <p className="stat-item__label">Years Industry Experience</p>
           </div>
           <div className="stat-item">
-            <p className="stat-item__num">4–6</p>
+            <p className="stat-item__num">4-6</p>
             <p className="stat-item__label">Sessions to See Results</p>
           </div>
           <div className="stat-item">
@@ -358,7 +358,7 @@ function HomePage() {
       </section>
 
       {/* BREAKTHROUGH BAND */}
-      <section className="image-band">
+      <section className="image-band page-section home-section home-section--band">
         <div className="container image-band__inner">
           <div className="image-band__panel">
             <p className="kicker">{homeContent.breakthroughEyebrow}</p>
@@ -376,7 +376,7 @@ function HomePage() {
       </section>
 
       {/* BENEFIT CARDS */}
-      <section className="section">
+      <section className="section page-section home-section home-section--benefits">
         <div className="container">
           <SectionHeading eyebrow="WHY CHOOSE HYPNOTHERAPY?" title="The Difference It Makes" />
           <div className="benefit-grid">
@@ -391,10 +391,10 @@ function HomePage() {
       </section>
 
       {/* SERVICE MATRIX */}
-      <ServiceMatrix />
+      <ServiceMatrix className="page-section home-section home-section--services" />
 
       {/* FAQ */}
-      <section className="section section--tint">
+      <section className="section section--tint page-section home-section home-section--faq">
         <div className="container faq-layout">
           <article className="faq-layout__intro">
             <SectionHeading
@@ -417,7 +417,7 @@ function HomePage() {
       </section>
 
       {/* ABOUT TIM */}
-      <section className="section">
+      <section className="section page-section home-section home-section--about">
         <div className="container split-section">
           <div className="split-section__content">
             <SectionHeading eyebrow={homeContent.about.eyebrow} title={business.person} />
@@ -437,7 +437,7 @@ function HomePage() {
       </section>
 
       {/* RESEARCH */}
-      <section className="section section--tint">
+      <section className="section section--tint page-section home-section home-section--research">
         <div className="container split-section split-section--reverse">
           <div className="split-section__media">
             <img className="split-section__image" src={images.research} alt="Hypnotherapy research" />
@@ -455,8 +455,12 @@ function HomePage() {
         </div>
       </section>
 
-      <QuoteBand quote={homeContent.research.quote} author={homeContent.research.author} />
-    </>
+      <QuoteBand
+        className="page-section home-section home-section--quote"
+        quote={homeContent.research.quote}
+        author={homeContent.research.author}
+      />
+    </div>
   );
 }
 
@@ -464,14 +468,15 @@ function AboutPage() {
   usePageTitle("About Me");
 
   return (
-    <>
+    <div className="page-layout page-layout--about">
       <PageHero
+        className="page-section about-section about-section--hero"
         eyebrow={business.person}
         title={aboutContent.title}
         body={[aboutContent.intro]}
         image={images.about}
       />
-      <section className="section">
+      <section className="section page-section about-section about-section--story">
         <div className="container split-section">
           <div className="split-section__content">
             {aboutContent.story.map((p) => (
@@ -479,11 +484,11 @@ function AboutPage() {
             ))}
           </div>
           <div className="split-section__media">
-            <img className="split-section__image" src={images.about} alt={business.person} />
+            <img className="split-section__image" src={images.aboutSupport} alt="Therapy setting" />
           </div>
         </div>
       </section>
-      <section className="section section--tint">
+      <section className="section section--tint page-section about-section about-section--values">
         <div className="container">
           <SectionHeading eyebrow="My Values" title="My Values & Beliefs" />
           <div className="card-grid">
@@ -496,7 +501,7 @@ function AboutPage() {
           </div>
         </div>
       </section>
-      <section className="section">
+      <section className="section page-section about-section about-section--testimonials">
         <div className="container">
           <SectionHeading eyebrow="Testimonials" title={testimonialsContent.title} />
           <div className="testimonial-grid">
@@ -509,8 +514,12 @@ function AboutPage() {
           </div>
         </div>
       </section>
-      <QuoteBand quote={aboutContent.quote} author={aboutContent.author} />
-    </>
+      <QuoteBand
+        className="page-section about-section about-section--quote"
+        quote={aboutContent.quote}
+        author={aboutContent.author}
+      />
+    </div>
   );
 }
 
@@ -583,9 +592,15 @@ function EMDRPage() {
   usePageTitle("EMDR");
 
   return (
-    <>
-      <PageHero eyebrow="EMDR" title={emdrContent.title} body={emdrContent.intro} image={images.emdr} />
-      <section className="section">
+    <div className="page-layout page-layout--emdr">
+      <PageHero
+        className="page-section emdr-section emdr-section--hero"
+        eyebrow="EMDR"
+        title={emdrContent.title}
+        body={emdrContent.intro}
+        image={images.emdr}
+      />
+      <section className="section page-section emdr-section emdr-section--difference">
         <div className="container split-section">
           <article className="split-section__content">
             <SectionHeading eyebrow="EMDR" title={emdrContent.difference.title} />
@@ -598,7 +613,7 @@ function EMDRPage() {
           </div>
         </div>
       </section>
-      <section className="section section--tint">
+      <section className="section section--tint page-section emdr-section emdr-section--process">
         <div className="container">
           <SectionHeading eyebrow="EMDR Process" title={emdrContent.stepsTitle} />
           <div className="timeline">
@@ -612,7 +627,7 @@ function EMDRPage() {
           </div>
         </div>
       </section>
-      <section className="section">
+      <section className="section page-section emdr-section emdr-section--evidence">
         <div className="container card-grid card-grid--2">
           {emdrContent.evidence.map((p) => (
             <article key={p} className="panel feature-card">
@@ -621,7 +636,7 @@ function EMDRPage() {
           ))}
         </div>
       </section>
-      <section className="section section--tint">
+      <section className="section section--tint page-section emdr-section emdr-section--values">
         <div className="container card-grid">
           {emdrContent.values.map((value) => (
             <article key={value.title} className="panel feature-card">
@@ -631,8 +646,12 @@ function EMDRPage() {
           ))}
         </div>
       </section>
-      <QuoteBand quote={emdrContent.quote} author={emdrContent.author} />
-    </>
+      <QuoteBand
+        className="page-section emdr-section emdr-section--quote"
+        quote={emdrContent.quote}
+        author={emdrContent.author}
+      />
+    </div>
   );
 }
 
@@ -640,14 +659,15 @@ function PricingPage() {
   usePageTitle("Pricing");
 
   return (
-    <>
+    <div className="page-layout page-layout--pricing">
       <PageHero
+        className="page-section pricing-section pricing-section--hero"
         eyebrow={business.person}
         title={pricingContent.title}
         body={pricingContent.intro}
         image={images.pricing}
       />
-      <section className="section">
+      <section className="section page-section pricing-section pricing-section--plans">
         <div className="container pricing-grid">
           {pricingContent.cards.map((card) => (
             <article key={card.eyebrow + card.title} className="panel pricing-card">
@@ -661,8 +681,8 @@ function PricingPage() {
           ))}
         </div>
       </section>
-      <ServiceMatrix />
-    </>
+      <ServiceMatrix className="page-section pricing-section pricing-section--services" />
+    </div>
   );
 }
 
@@ -696,14 +716,15 @@ function ContactPage() {
   usePageTitle("Contact");
 
   return (
-    <>
+    <div className="page-layout page-layout--contact">
       <PageHero
+        className="page-section contact-section contact-section--hero"
         eyebrow={contactContent.title}
         title={contactContent.title}
         body={[contactContent.intro]}
         image={images.contact}
       />
-      <section className="section">
+      <section className="section page-section contact-section contact-section--details">
         <div className="container contact-layout">
           <article className="panel contact-form-card">
             <p className="kicker">{contactContent.title}</p>
@@ -730,7 +751,7 @@ function ContactPage() {
           </aside>
         </div>
       </section>
-      <section className="section section--tint">
+      <section className="section section--tint page-section contact-section contact-section--faq">
         <div className="container">
           <SectionHeading eyebrow="Frequently Asked" title="Frequently Asked Questions" />
           <div className="faq-list">
@@ -752,8 +773,12 @@ function ContactPage() {
           </div>
         </div>
       </section>
-      <QuoteBand quote={contactContent.quote} author={contactContent.author} />
-    </>
+      <QuoteBand
+        className="page-section contact-section contact-section--quote"
+        quote={contactContent.quote}
+        author={contactContent.author}
+      />
+    </div>
   );
 }
 
@@ -797,9 +822,9 @@ function GeneratedPage({ page }) {
   );
 }
 
-function PageHero({ eyebrow, title, body, image, actions = true }) {
+function PageHero({ eyebrow, title, body, image, actions = true, className = "" }) {
   return (
-    <section className="page-hero">
+    <section className={`page-hero ${className}`.trim()}>
       <div className="container page-hero__inner">
         <div className="page-hero__content">
           {eyebrow ? <p className="kicker">{eyebrow}</p> : null}
@@ -840,9 +865,9 @@ function ActionRow({ children }) {
   return <div className="action-row">{children}</div>;
 }
 
-function QuoteBand({ quote, author }) {
+function QuoteBand({ quote, author, className = "" }) {
   return (
-    <section className="quote-band">
+    <section className={`quote-band ${className}`.trim()}>
       <div className="container quote-band__inner">
         <p className="quote-band__text">&ldquo;{cleanDisplayText(quote)}&rdquo;</p>
         <p className="quote-band__author">{cleanDisplayText(author)}</p>
@@ -851,9 +876,9 @@ function QuoteBand({ quote, author }) {
   );
 }
 
-function ServiceMatrix() {
+function ServiceMatrix({ className = "" }) {
   return (
-    <section className="section section--services">
+    <section className={`section section--services ${className}`.trim()}>
       <div className="container">
         <SectionHeading eyebrow="WHAT DO I TREAT?" title="Areas I Can Help With" />
         <div className="service-grid">

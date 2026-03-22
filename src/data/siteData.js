@@ -3,6 +3,7 @@ export const images = {
   favicon: "/archive-assets/wp-content/uploads/2021/07/cropped-favicon-1-32x32.png",
   hero: "/archive-assets/wp-content/uploads/2021/07/image-3.jpg",
   about: "/archive-assets/wp-content/uploads/2022/07/About-me-2-1.jpg",
+  aboutSupport: "/archive-assets/wp-content/uploads/2021/06/life-coach-33.jpg",
   emdr: "/archive-assets/wp-content/uploads/2022/05/emdr-person.jpeg",
   research: "/archive-assets/wp-content/uploads/2021/06/life-coach-20.jpg",
   contact: "/archive-assets/wp-content/uploads/2021/06/life-coach-25.jpg",
