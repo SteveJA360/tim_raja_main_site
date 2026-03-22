@@ -2378,6 +2378,512 @@ h3 {
    ============================== */
 
 /* ==============================
+   SWISS CLINIC
+   ============================== */
+
+.site-shell[data-variant="swiss-clinic"] {
+  background: #ffffff;
+  color: #22313f;
+  font-family: "DM Sans", sans-serif;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(button, input, textarea, select) {
+  font-family: "DM Sans", sans-serif;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(
+  h1,
+  h2,
+  h3,
+  .home-hero__h1,
+  .home-hero__hook,
+  .page-hero__h1,
+  .section-heading__h2,
+  .image-band__panel h2,
+  .statement-card h2,
+  .pricing-card h2,
+  .content-stream__heading,
+  .contact-form-card h2,
+  .location-block__title,
+  .empty-state h1
+) {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0d1f2d;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(
+  .kicker,
+  .content-stream__eyebrow,
+  .service-card__label,
+  .site-footer__label
+) {
+  color: #0f6e7a;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(
+  .variant-rail__label,
+  .variant-rail__active span:first-child,
+  .contact-panel__link,
+  .testimonial-card__author,
+  .research-blockquote cite
+) {
+  color: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(
+  .meta-line,
+  .variant-switcher__tone,
+  .variant-rail__active,
+  .site-nav__link,
+  .home-hero__summary,
+  .home-hero__text,
+  .page-hero__body,
+  .section-heading__intro,
+  .split-section__content p,
+  .faq-layout__intro p,
+  .faq-card p,
+  .faq-item p,
+  .feature-card p,
+  .statement-card p,
+  .pricing-card p:not(.pricing-card__price-line):not(.kicker),
+  .timeline__item p,
+  .testimonial-card__quote,
+  .contact-form-card p,
+  .location-block p,
+  .content-stream__paragraph,
+  .image-band__panel p,
+  .note-card p
+) {
+  color: #22313f;
+  font-family: "DM Sans", sans-serif;
+}
+
+.site-shell[data-variant="swiss-clinic"] .variant-rail {
+  background: #ffffff;
+  border-bottom: 1px solid #dde3e9;
+}
+
+.site-shell[data-variant="swiss-clinic"] .variant-rail__active {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.site-shell[data-variant="swiss-clinic"] .variant-switcher__button {
+  border: 1px solid #dde3e9;
+  border-radius: 4px;
+  background: #f7f9fb;
+  box-shadow: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] .variant-switcher__button:hover {
+  transform: none;
+  border-color: #0f6e7a;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] .variant-switcher__button.is-active {
+  background: #0f6e7a;
+  border-color: #0f6e7a;
+  color: #ffffff;
+}
+
+.site-shell[data-variant="swiss-clinic"] .variant-switcher__index {
+  border-radius: 4px;
+  background: #e7f0f2;
+  color: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] .variant-switcher__button.is-active .variant-switcher__index {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.site-shell[data-variant="swiss-clinic"] .variant-switcher__button.is-active .variant-switcher__tone {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.site-shell[data-variant="swiss-clinic"] .site-header {
+  background: #ffffff;
+  border-bottom: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] .site-header__accent {
+  height: 2px;
+  background: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] .site-header__inner {
+  min-height: 3.5rem;
+  border-bottom: 1px solid #dde3e9;
+}
+
+.site-shell[data-variant="swiss-clinic"] .site-nav {
+  gap: 1rem;
+}
+
+.site-shell[data-variant="swiss-clinic"] .site-nav__link {
+  padding: 0.55rem 0;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  font-size: 0.9rem;
+}
+
+.site-shell[data-variant="swiss-clinic"] .site-nav__link:hover {
+  color: #0d1f2d;
+  background: transparent;
+  border-color: #bdd3d8;
+}
+
+.site-shell[data-variant="swiss-clinic"] .site-nav__link.is-active {
+  color: #0f6e7a;
+  box-shadow: inset 0 -2px 0 #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] .menu-toggle {
+  border: 1px solid #dde3e9;
+  border-radius: 4px;
+  background: #ffffff;
+}
+
+.site-shell[data-variant="swiss-clinic"] .button {
+  border-radius: 4px;
+  font-family: "DM Sans", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  box-shadow: none;
+  transition: border-color 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.site-shell[data-variant="swiss-clinic"] .button:hover {
+  transform: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] .button--solid {
+  background: #0f6e7a;
+  border-color: #0f6e7a;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] .button--solid:hover {
+  background: #0a5663;
+  border-color: #0a5663;
+  box-shadow: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(.button--outline, .button--ghost) {
+  background: transparent;
+  border: 1.5px solid #0f6e7a;
+  color: #0f6e7a;
+  box-shadow: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(.button--outline:hover, .button--ghost:hover) {
+  background: #f0f5f8;
+  border-color: #0a5663;
+  color: #0a5663;
+}
+
+.site-shell[data-variant="swiss-clinic"] .button--soft {
+  background: #f0f5f8;
+  border-color: #dde3e9;
+  color: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] .button--soft:hover {
+  background: #e5eef2;
+  border-color: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(.home-hero, .page-hero) {
+  background: #ffffff;
+}
+
+.site-shell[data-variant="swiss-clinic"] .home-hero::before,
+.site-shell[data-variant="swiss-clinic"] .page-hero::after,
+.site-shell[data-variant="swiss-clinic"] .image-band::after {
+  display: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(.home-hero__inner, .page-hero__inner) {
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 4vw, 3rem);
+  align-items: center;
+}
+
+.site-shell[data-variant="swiss-clinic"] .home-hero__blob,
+.site-shell[data-variant="swiss-clinic"] .hero-badge {
+  display: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] .home-hero__img-wrap {
+  padding: 0;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(
+  .home-hero__portrait,
+  .page-hero__img,
+  .split-section__image
+) {
+  border-radius: 8px;
+  border: 1px solid #dde3e9;
+  box-shadow: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] .intro-panel {
+  background: #f7f9fb;
+  border: 1px solid #dde3e9;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] .proof-strip {
+  background: #f7f9fb;
+  border-top: 1px solid #dde3e9;
+  border-bottom: 1px solid #dde3e9;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(.proof-strip__inner img, .proof-logos--compact img) {
+  filter: grayscale(1);
+  opacity: 0.55;
+}
+
+.site-shell[data-variant="swiss-clinic"] .proof-strip__inner img:hover,
+.site-shell[data-variant="swiss-clinic"] .proof-logos--compact img:hover {
+  opacity: 0.8;
+}
+
+.site-shell[data-variant="swiss-clinic"] .stats-strip {
+  background: #f0f5f8;
+  border-top: 1px solid #dde3e9;
+  border-bottom: 1px solid #dde3e9;
+}
+
+.site-shell[data-variant="swiss-clinic"] .stat-item__num {
+  font-family: "DM Sans", sans-serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] .stat-item__label {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #22313f;
+}
+
+.site-shell[data-variant="swiss-clinic"] .section--tint {
+  background: #f0f5f8;
+}
+
+.site-shell[data-variant="swiss-clinic"] .image-band {
+  background: #f0f5f8;
+}
+
+.site-shell[data-variant="swiss-clinic"] .image-band__panel {
+  max-width: 56rem;
+  background: #ffffff;
+  border: 1px solid #dde3e9;
+  border-radius: 4px;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] .image-band__panel .button--solid {
+  background: #0f6e7a;
+  color: #ffffff;
+}
+
+.site-shell[data-variant="swiss-clinic"] .benefit-card {
+  background: #f7f9fb;
+  border: 1px solid #dde3e9;
+  border-radius: 4px;
+  box-shadow: none;
+  transition: border-color 180ms ease;
+}
+
+.site-shell[data-variant="swiss-clinic"] .benefit-card:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] .benefit-card__num {
+  position: static;
+  margin: 0 0 0.85rem;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] .benefit-card p:not(.benefit-card__num) {
+  color: #22313f;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(
+  .panel,
+  .service-card,
+  .faq-card,
+  .faq-item,
+  .feature-card,
+  .statement-card,
+  .pricing-card,
+  .note-card
+) {
+  background: #f7f9fb;
+  border: 1px solid #dde3e9;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(
+  .statement-card,
+  .faq-card,
+  .faq-item,
+  .timeline__item,
+  .note-card
+) {
+  border-radius: 4px !important;
+}
+
+.site-shell[data-variant="swiss-clinic"] .note-card {
+  border: 1px solid #dde3e9 !important;
+}
+
+.site-shell[data-variant="swiss-clinic"] .feature-card,
+.site-shell[data-variant="swiss-clinic"] .statement-card,
+.site-shell[data-variant="swiss-clinic"] .pricing-card {
+  border-left: 1px solid #dde3e9;
+  border-top: 1px solid #dde3e9;
+}
+
+.site-shell[data-variant="swiss-clinic"] :is(
+  .service-card:hover,
+  .faq-item:hover,
+  .feature-card:hover,
+  .timeline__item:hover,
+  .pricing-card:hover,
+  .testimonial-card:hover
+) {
+  transform: none;
+  box-shadow: none;
+  border-color: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] .service-card:hover .service-card__img img {
+  transform: none;
+}
+
+.site-shell[data-variant="swiss-clinic"] .faq-card h3,
+.site-shell[data-variant="swiss-clinic"] .feature-card h3,
+.site-shell[data-variant="swiss-clinic"] .timeline__item h3,
+.site-shell[data-variant="swiss-clinic"] .pricing-card__price-line {
+  color: #0d1f2d;
+}
+
+.site-shell[data-variant="swiss-clinic"] .faq-item summary {
+  color: #0d1f2d;
+  font-weight: 700;
+}
+
+.site-shell[data-variant="swiss-clinic"] .timeline__number {
+  font-family: "DM Sans", sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] .research-blockquote {
+  background: #f7f9fb;
+  border: 1px solid #dde3e9;
+  border-left: 4px solid #0f6e7a;
+  border-radius: 4px;
+  color: #22313f;
+}
+
+.site-shell[data-variant="swiss-clinic"] .contact-panel__link:hover {
+  color: #0a5663;
+}
+
+.site-shell[data-variant="swiss-clinic"] .quote-band {
+  background: #0d1f2d;
+}
+
+.site-shell[data-variant="swiss-clinic"] .quote-band__text {
+  font-family: "DM Sans", sans-serif;
+  font-style: italic;
+  font-weight: 400;
+  color: #ffffff;
+}
+
+.site-shell[data-variant="swiss-clinic"] .quote-band__author {
+  color: #0f6e7a;
+}
+
+.site-shell[data-variant="swiss-clinic"] .hubspot-form :is(input, textarea, select) {
+  border: 1px solid #dde3e9 !important;
+  border-radius: 4px !important;
+  background: #ffffff !important;
+}
+
+.site-shell[data-variant="swiss-clinic"] .hubspot-form :is(input, textarea, select):focus {
+  border-color: #0f6e7a !important;
+}
+
+.site-shell[data-variant="swiss-clinic"] .hubspot-form :is(input, textarea, select, label, legend, .hs-richtext) {
+  font-family: "DM Sans", sans-serif !important;
+  color: #22313f !important;
+}
+
+.site-shell[data-variant="swiss-clinic"] .hubspot-form .actions input,
+.site-shell[data-variant="swiss-clinic"] .hubspot-form .hs-button {
+  border-radius: 4px !important;
+  background: #0f6e7a !important;
+  box-shadow: none !important;
+  font-family: "DM Sans", sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+}
+
+.site-shell[data-variant="swiss-clinic"] .site-footer {
+  background: #0d1f2d;
+}
+
+.site-shell[data-variant="swiss-clinic"] .site-footer__brand a {
+  color: #8fd0d7;
+}
+
+.site-shell[data-variant="swiss-clinic"] .site-footer__links a,
+.site-shell[data-variant="swiss-clinic"] .site-footer__links p,
+.site-shell[data-variant="swiss-clinic"] .site-footer__brand p,
+.site-shell[data-variant="swiss-clinic"] .site-footer__bottom p {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ==============================
    PAGE LAYOUT HOOKS
    ============================== */
 
@@ -2403,7 +2909,42 @@ h3 {
   align-items: stretch;
 }
 
+.site-shell[data-variant="swiss-clinic"] .page-layout--home > .home-section--hero { order: 1; }
+.site-shell[data-variant="swiss-clinic"] .page-layout--home > .home-section--proof { order: 2; }
+.site-shell[data-variant="swiss-clinic"] .page-layout--home > .home-section--stats { order: 3; }
+.site-shell[data-variant="swiss-clinic"] .page-layout--home > .home-section--about { order: 4; }
+.site-shell[data-variant="swiss-clinic"] .page-layout--home > .home-section--benefits { order: 5; }
+.site-shell[data-variant="swiss-clinic"] .page-layout--home > .home-section--services { order: 6; }
+.site-shell[data-variant="swiss-clinic"] .page-layout--home > .home-section--band { order: 7; }
+.site-shell[data-variant="swiss-clinic"] .page-layout--home > .home-section--faq { order: 8; }
+.site-shell[data-variant="swiss-clinic"] .page-layout--home > .home-section--research { order: 9; }
+.site-shell[data-variant="swiss-clinic"] .page-layout--home > .home-section--quote { order: 10; }
+
 @media (min-width: 1041px) {
+  .site-shell[data-variant="swiss-clinic"] .page-layout--home .service-card {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .site-shell[data-variant="swiss-clinic"] .page-layout--home .service-card__img {
+    aspect-ratio: auto;
+    min-height: 100%;
+  }
+
+  .site-shell[data-variant="swiss-clinic"] .page-layout--home .service-card__img img {
+    height: 100%;
+  }
+
+  .site-shell[data-variant="swiss-clinic"] .page-layout--about .split-section,
+  .site-shell[data-variant="swiss-clinic"] .page-layout--emdr .split-section {
+    grid-template-columns: 0.95fr 1.05fr;
+  }
+
+  .site-shell[data-variant="swiss-clinic"] .page-layout--contact .contact-layout {
+    grid-template-columns: minmax(0, 1.2fr) minmax(18rem, 0.8fr);
+  }
+
   .site-shell[data-variant="editorial"] .page-hero__inner {
     grid-template-columns: 0.95fr 1.05fr;
     align-items: stretch;
