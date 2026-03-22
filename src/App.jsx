@@ -61,6 +61,7 @@ const siteVariants = [
   { id: "executive", index: "04", name: "Executive", tone: "Corporate" },
   { id: "boutique", index: "05", name: "Boutique", tone: "Expressive" },
   { id: "swiss-clinic", index: "06", name: "Swiss Clinic", tone: "Clinical" },
+  { id: "dark-concierge", index: "07", name: "Dark Concierge", tone: "Premium" },
 ];
 
 const defaultVariantId = siteVariants[0].id;
