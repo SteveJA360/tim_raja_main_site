@@ -54,6 +54,17 @@ const displayReplacements = [
   ["\u0141", "\u00a3"],
 ];
 
+const siteVariants = [
+  { id: "signature", index: "01", name: "Signature", tone: "Balanced" },
+  { id: "editorial", index: "02", name: "Editorial", tone: "Classic" },
+  { id: "serene", index: "03", name: "Serene", tone: "Soft" },
+  { id: "executive", index: "04", name: "Executive", tone: "Corporate" },
+  { id: "boutique", index: "05", name: "Boutique", tone: "Expressive" },
+];
+
+const defaultVariantId = siteVariants[0].id;
+const variantStorageKey = "tim-raja-site-variant";
+
 let generatedPagesCache;
 let generatedPagesPromise;
 
@@ -73,6 +84,32 @@ function formatTitle(title) {
   if (!title) return business.siteName;
   if (title.includes("Tim Raja Hypnotherapy")) return cleanDisplayText(title);
   return `${cleanDisplayText(title)} | ${business.siteName}`;
+}
+
+function isValidVariantId(value) {
+  return siteVariants.some((variant) => variant.id === value);
+}
+
+function getInitialVariantId() {
+  if (typeof window === "undefined") return defaultVariantId;
+
+  const urlVariant = new URLSearchParams(window.location.search).get("variant");
+  if (isValidVariantId(urlVariant)) return urlVariant;
+
+  const savedVariant = window.localStorage.getItem(variantStorageKey);
+  if (isValidVariantId(savedVariant)) return savedVariant;
+
+  return defaultVariantId;
+}
+
+function syncVariantInUrl(variantId) {
+  if (typeof window === "undefined") return;
+
+  const url = new URL(window.location.href);
+  if (url.searchParams.get("variant") === variantId) return;
+
+  url.searchParams.set("variant", variantId);
+  window.history.replaceState({}, "", url);
 }
 
 function joinText(previous, next) {
@@ -131,12 +168,25 @@ function ScrollToTop() {
 
 function AppShell() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [variantId, setVariantId] = useState(getInitialVariantId);
   const location = useLocation();
+  const activeVariant =
+    siteVariants.find((variant) => variant.id === variantId) ?? siteVariants[0];
+
   useEffect(() => { setMenuOpen(false); }, [location.pathname]);
+  useEffect(() => {
+    window.localStorage.setItem(variantStorageKey, variantId);
+    syncVariantInUrl(variantId);
+  }, [location.pathname, variantId]);
 
   return (
-    <div className="site-shell">
-      <Header menuOpen={menuOpen} setMenuOpen={setMenuOpen} />
+    <div className="site-shell" data-variant={variantId}>
+      <Header
+        activeVariant={activeVariant}
+        menuOpen={menuOpen}
+        setMenuOpen={setMenuOpen}
+        setVariantId={setVariantId}
+      />
       <main>
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -154,9 +204,19 @@ function AppShell() {
   );
 }
 
-function Header({ menuOpen, setMenuOpen }) {
+function Header({ activeVariant, menuOpen, setMenuOpen, setVariantId }) {
   return (
     <header className="site-header">
+      <div className="variant-rail">
+        <div className="container variant-rail__inner">
+          <p className="variant-rail__label">Design Variants</p>
+          <VariantSwitcher activeVariant={activeVariant} setVariantId={setVariantId} />
+          <p className="variant-rail__active">
+            <span>{activeVariant.index}</span>
+            <span>{activeVariant.name}</span>
+          </p>
+        </div>
+      </div>
       <div className="site-header__accent" />
       <div className="container site-header__inner">
         <Link className="brand" to="/" aria-label={business.siteName}>
@@ -182,15 +242,37 @@ function Header({ menuOpen, setMenuOpen }) {
               className={({ isActive }) => `site-nav__link ${isActive ? "is-active" : ""}`}
               to={link.href}
             >
-              {link.label}
+              {cleanDisplayText(link.label)}
             </NavLink>
           ))}
           <a className="button button--solid site-nav__cta" href={business.phoneHref}>
-            {homeContent.introButton}
+            {cleanDisplayText(homeContent.introButton)}
           </a>
         </nav>
       </div>
     </header>
+  );
+}
+
+function VariantSwitcher({ activeVariant, setVariantId }) {
+  return (
+    <div className="variant-switcher" aria-label="Choose design variant">
+      {siteVariants.map((variant) => (
+        <button
+          key={variant.id}
+          className={`variant-switcher__button ${activeVariant.id === variant.id ? "is-active" : ""}`}
+          type="button"
+          aria-pressed={activeVariant.id === variant.id}
+          onClick={() => setVariantId(variant.id)}
+        >
+          <span className="variant-switcher__index">{variant.index}</span>
+          <span className="variant-switcher__body">
+            <span className="variant-switcher__name">{variant.name}</span>
+            <span className="variant-switcher__tone">{variant.tone}</span>
+          </span>
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -569,12 +651,12 @@ function PricingPage() {
         <div className="container pricing-grid">
           {pricingContent.cards.map((card) => (
             <article key={card.eyebrow + card.title} className="panel pricing-card">
-              <p className="kicker">{card.eyebrow}</p>
-              <h2>{card.title}</h2>
+              <p className="kicker">{cleanDisplayText(card.eyebrow)}</p>
+              <h2>{cleanDisplayText(card.title)}</h2>
               {card.prices.map((price) => (
-                <p key={price} className="pricing-card__price-line">{price}</p>
+                <p key={price} className="pricing-card__price-line">{cleanDisplayText(price)}</p>
               ))}
-              <p>{card.text}</p>
+              <p>{cleanDisplayText(card.text)}</p>
             </article>
           ))}
         </div>
@@ -787,8 +869,8 @@ function ServiceMatrix() {
                 </div>
               )}
               <div className="service-card__body">
-                <p className="service-card__label">{service.label}</p>
-                <h3>{service.item}</h3>
+                <p className="service-card__label">{cleanDisplayText(service.label)}</p>
+                <h3>{cleanDisplayText(service.item)}</h3>
               </div>
             </Link>
           ))}
@@ -932,21 +1014,21 @@ function Footer() {
           <p className="site-footer__label">Pages</p>
           <div className="site-footer__links">
             {navLinks.map((link) => (
-              <Link key={link.href} to={link.href}>{link.label}</Link>
+              <Link key={link.href} to={link.href}>{cleanDisplayText(link.label)}</Link>
             ))}
           </div>
         </div>
         {footerContent.columns.map((column) => (
           <div key={column.title + column.items[0]}>
-            <p className="site-footer__label">{column.title}</p>
+            <p className="site-footer__label">{cleanDisplayText(column.title)}</p>
             <div className="site-footer__links">
-              {column.items.map((item) => <p key={item}>{item}</p>)}
+              {column.items.map((item) => <p key={item}>{cleanDisplayText(item)}</p>)}
             </div>
           </div>
         ))}
       </div>
       <div className="container site-footer__bottom">
-        <p>{footerContent.legal}</p>
+        <p>{cleanDisplayText(footerContent.legal)}</p>
       </div>
     </footer>
   );
